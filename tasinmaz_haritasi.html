@@ -36,13 +36,41 @@
         .popup-container strong { color: #333; font-size: 12px; }
         .popup-container hr { border: none; height: 1px; background: #eee; margin: 6px 0; }
         .popup-title { font-size: 16px; font-weight: 600; color: #e74c3c; margin-bottom: 5px; }
+
+        /* === GELİŞTİRME 3: ARAMA KUTUSU STİLLERİ === */
+        input[type="text"] {
+            width: 100%;
+            padding: 8px 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            background-color: white;
+            font-size: 13px;
+            box-sizing: border-box; /* Padding'in genişliği etkilememesi için */
+            max-width: 200px;
+        }
+        .search-container {
+            display: flex;
+            gap: 5px; /* Kutu ve buton arası boşluk */
+        }
+        .search-container input {
+            width: 70%; /* Genişliğin %70'i */
+            max-width: none;
+        }
+        .search-container button {
+            width: 30%; /* Genişliğin %30'u */
+            margin: 0;
+            padding: 8px 5px;
+        }
     </style>
 </head>
 <body>
     <div id="map"></div>
     
+    <div class="header"> ... (içerik aynı) ... </div>
+    <div class="stats"> ... (içerik aynı) ... </div>
+    <div class="legend"> ... (içerik aynı) ... </div>
     <div class="header">
-        <div class="day">AŞAMA 2</div>
+        <div class="day">AŞAMA 3</div>
         <h1>Taşınmaz Ağı Haritası</h1>
         <p>Kurumun <strong>~7,000</strong> taşınmaz noktası arasındaki bağlantı ağı.</p>
         <p style="font-size: 12px; color: #888; margin-top: 10px;">
@@ -73,6 +101,14 @@
     </div>
 
     <div class="controls">
+        <div class="control-group">
+            <label class="control-label">KN_No ile Taşınmaz Ara</label>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="KN No girin...">
+                <button id="searchButton">Ara</button>
+            </div>
+        </div>
+
         <div class="control-group">
             <label class="control-label">Taşınmaz Grubu Filtresi</label>
             <select id="filterGroupSelect">
@@ -165,7 +201,7 @@
         function calculateDistance(lon1, lat1, lon2, lat2) { const R = 6371e3; const φ1 = lat1 * Math.PI / 180; const φ2 = lat2 * Math.PI / 180; const Δφ = (lat2 - lat1) * Math.PI / 180; const Δλ = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2); const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
         function getColorForDistance(distance) { if (distance < 500) return { color: '#27ae60', opacity: 0.9, width: 2.5 }; if (distance < 1000) return { color: '#f39c12', opacity: 0.8, width: 2.0 }; if (distance < 2000) return { color: '#e67e22', opacity: 0.7, width: 1.5 }; if (distance < 3000) return { color: '#e74c3c', opacity: 0.5, width: 1.2 }; return { color: '#c0392b', opacity: 0.3, width: 1.0 }; }
 
-        // === DÜZELTME: 'latLng.lat' TYPO DÜZELTİLDİ ===
+        // updateSpider (Typo Düzeltilmişti, Değişiklik yok)
         function updateSpider(lngLat) {
             if (!map.getSource('spider-lines')) return; 
             if (filteredPoints.length === 0) {
@@ -174,10 +210,7 @@
                 map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: [] });
                 return;
             }
-            
-            const mouseLon = lngLat.lng;
-            const mouseLat = lngLat.lat; // <-- HATA BURADAYDI, 'latLng' -> 'lngLat' OLARAK DÜZELTİLDİ
-            
+            const mouseLon = lngLat.lng; const mouseLat = lngLat.lat; 
             const pointsWithDistance = filteredPoints.map(point => {
                 const [lon, lat] = point.geometry.coordinates;
                 const distance = calculateDistance(mouseLon, mouseLat, lon, lat);
@@ -197,7 +230,7 @@
             map.getSource('mouse-point').setData({ type: 'FeatureCollection', features: [{ type: 'Feature', geometry: { type: 'Point', coordinates: [mouseLon, mouseLat] } }] });
         }
 
-        // Mouse move handler (Anlık tepki, değişiklik yok)
+        // Mouse move handler (Değişiklik yok)
         map.on('mousemove', (e) => {
             if (animationEnabled) { mousePosition = e.lngLat; updateSpider(e.lngLat); }
         });
@@ -208,7 +241,7 @@
             document.getElementById('nearestDistance').textContent = '-';
         });
 
-        // Controls (Kaydıraçlar) (Anlık tepki, değişiklik yok)
+        // Controls (Kaydıraçlar) (Değişiklik yok)
         document.getElementById('maxDistance').addEventListener('input', (e) => {
             maxDistance = parseInt(e.target.value);
             document.getElementById('maxDistanceValue').textContent = `${maxDistance}m`;
@@ -229,11 +262,9 @@
             } else if (mousePosition) { updateSpider(mousePosition); }
         });
 
-
-        // Filtre Dinleyicisi (Sınıflandırma mantığına göre güncellendi)
+        // Filtre Dinleyicisi (Değişiklik yok)
         document.getElementById('filterGroupSelect').addEventListener('change', (e) => {
             const selectedGroup = e.target.value;
-            
             if (selectedGroup === 'TÜMÜ') {
                 map.setFilter('tasinmazlar-layer', null);
                 filteredPoints = allPoints;
@@ -249,9 +280,12 @@
         });
 
 
-        // Pop-up (Açılır Pencere) (Biraz güncellendi)
-        map.on('click', 'tasinmazlar-layer', (e) => {
-            const feature = e.features[0]; const coords = feature.geometry.coordinates.slice(); const props = feature.properties; 
+        // === GELİŞTİRME 3: YENİ POPUP FONKSİYONU (REFACTORING) ===
+        // Bu fonksiyon artık hem 'click' hem de 'search' tarafından kullanılacak
+        function showPopup(feature) {
+            const coords = feature.geometry.coordinates.slice();
+            const props = feature.properties; 
+            
             let html = `<div class="popup-container">`;
             html += `<div class="popup-title">Taşınmaz Bilgisi</div>`;
             if (props.Tapu_Sicil) html += `<strong>Tapu Sicil:</strong> ${props.Tapu_Sicil}<br>`;
@@ -259,16 +293,61 @@
             if (props.İl_Adı) html += `<strong>İl/İlçe:</strong> ${props.İl_Adı} / ${props.İlçe_Adı}<br>`;
             if (props.Mahalle) html += `<strong>Mahalle:</strong> ${props.Mahalle}<br>`;
             if (props.Ada) html += `<strong>Ada/Parsel:</strong> ${props.Ada} / ${props.Parsel}<br>`;
-            
-            // Pop-up'a hem ham veriyi hem de sınıflandırdığımız grubu ekleyelim:
             if (props['Kullanım_Niteliği_Tanımı']) html += `<strong>Nitelik:</strong> ${props['Kullanım_Niteliği_Tanımı']}<br>`;
             if (props.FiltreGrubu) html += `<strong>Grup:</strong> ${props.FiltreGrubu}<br>`;
-
             if (props.Yüz_Ölçüm) html += `<strong>Yüz Ölçüm:</strong> ${props.Yüz_Ölçüm} m²<br>`;
             html += `<hr><strong>Konum:</strong><br>${coords[1].toFixed(6)}, ${coords[0].toFixed(6)}`;
             html += `</div>`;
-            new maplibregl.Popup({ closeOnClick: true, maxWidth: '240px' }).setLngLat(coords).setHTML(html).addTo(map);
+            
+            new maplibregl.Popup({ closeOnClick: true, maxWidth: '240px' })
+                .setLngLat(coords)
+                .setHTML(html)
+                .addTo(map);
+        }
+
+        // === GELİŞTİRME 3: CLICK HANDLER GÜNCELLENDİ ===
+        // Artık sadece yeni 'showPopup' fonksiyonunu çağırıyor
+        map.on('click', 'tasinmazlar-layer', (e) => {
+            showPopup(e.features[0]);
         });
+        
+        // === GELİŞTİRME 3: YENİ ARAMA FONKSİYONU EKLENDİ ===
+        document.getElementById('searchButton').addEventListener('click', () => {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (!searchTerm) return; // Boşsa bir şey yapma
+
+            // Ana listede (allPoints) ara, böylece filtrelenmiş olsa bile bulur
+            const result = allPoints.find(feature => {
+                // Not: KN_No bir sayı ise '==' kullanmak, metin ise '===' kullanmak daha güvenli
+                // Veya ikisini de metne çevirip karşılaştırmak en garantisi
+                // Şimdilik '==' ile devam edelim, çalışmazsa değiştiririz.
+                return feature.properties.KN_No == searchTerm;
+            });
+
+            if (result) {
+                // BAŞARILI: Taşınmaz bulundu
+                
+                // 1. Filtreleri temizle ki nokta görünür olsun
+                document.getElementById('filterGroupSelect').value = 'TÜMÜ';
+                map.setFilter('tasinmazlar-layer', null);
+                filteredPoints = allPoints;
+
+                // 2. Noktanın koordinatlarına uç
+                map.flyTo({
+                    center: result.geometry.coordinates,
+                    zoom: 17, // Tek bir noktaya bakmak için 17-18 iyi bir zoom
+                    speed: 1.5
+                });
+                
+                // 3. Pop-up'ı otomatik aç
+                showPopup(result);
+
+            } else {
+                // BAŞARISIZ: Taşınmaz bulunamadı
+                alert('Bu KN_No ile taşınmaz bulunamadı.\nLütfen tam ve doğru bir KN No girin.');
+            }
+        });
+
 
         // Cursor (Fare İmla) (Değişiklik yok)
         map.on('mouseenter', 'tasinmazlar-layer', () => { map.getCanvas().style.cursor = 'pointer'; });
@@ -276,4 +355,3 @@
     </script>
 </body>
 </html>
-
