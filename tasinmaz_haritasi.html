@@ -98,40 +98,17 @@
     </div>
 
     <script>
-        // === GELİŞTİRME 2.2: YENİ SINIFLANDIRMA FONKSİYONU ===
-        // Bu fonksiyon, "Kullanım Niteliği Tanımı"nı sizin 5 grubunuzdan birine çevirir.
+        // Sınıflandırma Fonksiyonu (Değişiklik yok)
         function getFiltreGrubu(nitelik) {
-            if (!nitelik) {
-                return 'DİĞER'; // Boş verileri 'DİĞER' olarak sınıflandır
-            }
-            
-            // 1. ARSA grubu
-            if (nitelik === 'ARSA') {
-                return 'ARSA';
-            }
-            
-            // 2. TARLA grubu
-            if (nitelik === 'TARLA') {
-                return 'TARLA';
-            }
-
-            // 3. KONUT grubu
+            if (!nitelik) { return 'DİĞER'; }
+            if (nitelik === 'ARSA') { return 'ARSA'; }
+            if (nitelik === 'TARLA') { return 'TARLA'; }
             const konutGrubu = ['GELENEKSEL APARTMAN', 'GELENEKSEL DAİRE', 'MÜSTAKİL KONUT'];
-            if (konutGrubu.includes(nitelik)) {
-                return 'KONUT';
-            }
-            
-            // 4. İŞYERİ grubu
+            if (konutGrubu.includes(nitelik)) { return 'KONUT'; }
             const isyeriGrubu = ['DÜKKAN/MAĞAZA', 'İŞYERİ/BÜRO', 'İŞ MERKEZİ/İŞ HANI'];
-            if (isyeriGrubu.includes(nitelik)) {
-                return 'İŞYERİ';
-            }
-
-            // 5. Kalanlar
+            if (isyeriGrubu.includes(nitelik)) { return 'İŞYERİ'; }
             return 'DİĞER';
         }
-        // === GELİŞTİRME 2.2 BİTTİ ===
-
 
         // Initialize map
         const map = new maplibregl.Map({
@@ -158,15 +135,11 @@
             .then(response => response.json())
             .then(data => {
                 
-                // === GELİŞTİRME 2.2: VERİ ÖN İŞLEME (SINIFLANDIRMA) ===
-                // 7,000 noktanın tamamı üzerinde dön
+                // Veri ön işleme (Sınıflandırma) (Değişiklik yok)
                 data.features.forEach(feature => {
-                    // 1. "Kullanım Niteliği Tanımı"nı al
                     const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
-                    // 2. Yeni sanal özelliği (FiltreGrubu) oluştur
                     feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
                 });
-                // === GELİŞTİRME 2.2 BİTTİ ===
 
                 allPoints = data.features;
                 filteredPoints = data.features;
@@ -175,7 +148,7 @@
                 map.on('load', () => {
                     map.addSource('tasinmazlar', {
                         type: 'geojson',
-                        data: data // Artık 'FiltreGrubu' özelliğini içeren güncellenmiş veriyi yükle
+                        data: data 
                     });
                     map.addLayer({
                         id: 'tasinmazlar-layer', type: 'circle', source: 'tasinmazlar',
@@ -188,11 +161,11 @@
                 });
             });
 
-        // ... (calculateDistance ve getColorForDistance fonksiyonları, değişiklik yok) ...
+        // calculateDistance ve getColorForDistance (Değişiklik yok)
         function calculateDistance(lon1, lat1, lon2, lat2) { const R = 6371e3; const φ1 = lat1 * Math.PI / 180; const φ2 = lat2 * Math.PI / 180; const Δφ = (lat2 - lat1) * Math.PI / 180; const Δλ = (lon2 - lon1) * Math.PI / 180; const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ/2) * Math.sin(Δλ/2); const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); return R * c; }
         function getColorForDistance(distance) { if (distance < 500) return { color: '#27ae60', opacity: 0.9, width: 2.5 }; if (distance < 1000) return { color: '#f39c12', opacity: 0.8, width: 2.0 }; if (distance < 2000) return { color: '#e67e22', opacity: 0.7, width: 1.5 }; if (distance < 3000) return { color: '#e74c3c', opacity: 0.5, width: 1.2 }; return { color: '#c0392b', opacity: 0.3, width: 1.0 }; }
 
-        // updateSpider (Değişiklik yok, 'filteredPoints' kullanıyor)
+        // === DÜZELTME: 'latLng.lat' TYPO DÜZELTİLDİ ===
         function updateSpider(lngLat) {
             if (!map.getSource('spider-lines')) return; 
             if (filteredPoints.length === 0) {
@@ -201,7 +174,10 @@
                 map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: [] });
                 return;
             }
-            const mouseLon = lngLat.lng; const mouseLat = latLng.lat;
+            
+            const mouseLon = lngLat.lng;
+            const mouseLat = lngLat.lat; // <-- HATA BURADAYDI, 'latLng' -> 'lngLat' OLARAK DÜZELTİLDİ
+            
             const pointsWithDistance = filteredPoints.map(point => {
                 const [lon, lat] = point.geometry.coordinates;
                 const distance = calculateDistance(mouseLon, mouseLat, lon, lat);
@@ -254,8 +230,7 @@
         });
 
 
-        // === GELİŞTİRME 2.2: FİLTRE DİNLEYİCİSİ GÜNCELLENDİ ===
-        // Artık 'filterGroupSelect' ID'sini ve 'FiltreGrubu' sanal sütununu kullanıyor
+        // Filtre Dinleyicisi (Sınıflandırma mantığına göre güncellendi)
         document.getElementById('filterGroupSelect').addEventListener('change', (e) => {
             const selectedGroup = e.target.value;
             
@@ -263,10 +238,7 @@
                 map.setFilter('tasinmazlar-layer', null);
                 filteredPoints = allPoints;
             } else {
-                // Filtreyi haritaya uygula
                 map.setFilter('tasinmazlar-layer', ['==', ['get', 'FiltreGrubu'], selectedGroup]);
-                
-                // Örümcek ağı listesini de filtrele
                 filteredPoints = allPoints.filter(feature => {
                     return feature.properties.FiltreGrubu === selectedGroup;
                 });
@@ -277,7 +249,7 @@
         });
 
 
-        // Pop-up (Açılır Pencere) (Değişiklik yok)
+        // Pop-up (Açılır Pencere) (Biraz güncellendi)
         map.on('click', 'tasinmazlar-layer', (e) => {
             const feature = e.features[0]; const coords = feature.geometry.coordinates.slice(); const props = feature.properties; 
             let html = `<div class="popup-container">`;
@@ -287,9 +259,11 @@
             if (props.İl_Adı) html += `<strong>İl/İlçe:</strong> ${props.İl_Adı} / ${props.İlçe_Adı}<br>`;
             if (props.Mahalle) html += `<strong>Mahalle:</strong> ${props.Mahalle}<br>`;
             if (props.Ada) html += `<strong>Ada/Parsel:</strong> ${props.Ada} / ${props.Parsel}<br>`;
-            // Kullanım Niteliği Tanımı'nı göstermek Cins_Açıklama'dan daha mantıklı olabilir:
-            if (props['Kullanım_Niteliği_Tanımı']) html += `<strong>Kullanım Niteliği:</strong> ${props['Kullanım_Niteliği_Tanımı']}<br>`;
-            if (props.Kullanım_Durumu) html += `<strong>Kullanım Durumu:</strong> ${props.Kullanım_Durumu}<br>`;
+            
+            // Pop-up'a hem ham veriyi hem de sınıflandırdığımız grubu ekleyelim:
+            if (props['Kullanım_Niteliği_Tanımı']) html += `<strong>Nitelik:</strong> ${props['Kullanım_Niteliği_Tanımı']}<br>`;
+            if (props.FiltreGrubu) html += `<strong>Grup:</strong> ${props.FiltreGrubu}<br>`;
+
             if (props.Yüz_Ölçüm) html += `<strong>Yüz Ölçüm:</strong> ${props.Yüz_Ölçüm} m²<br>`;
             html += `<hr><strong>Konum:</strong><br>${coords[1].toFixed(6)}, ${coords[0].toFixed(6)}`;
             html += `</div>`;
