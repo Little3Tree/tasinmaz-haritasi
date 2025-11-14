@@ -41,9 +41,6 @@
 <body>
     <div id="map"></div>
     
-    <div class="header"> ... (içerik aynı) ... </div>
-    <div class="stats"> ... (içerik aynı) ... </div>
-    <div class="legend"> ... (içerik aynı) ... </div>
     <div class="header">
         <div class="day">AŞAMA 2</div>
         <h1>Taşınmaz Ağı Haritası</h1>
@@ -56,7 +53,6 @@
             Kurum Taşınmazları Verisi (GeoJSON)
         </p>
     </div>
-
     <div class="stats">
         <div class="stats-row">
             <span class="stats-label">Aktif Bağlantı:</span>
@@ -67,7 +63,6 @@
             <span class="stats-value" id="nearestDistance">-</span>
         </div>
     </div>
-
     <div class="legend">
         <h3>Bağlantı Mesafesi</h3>
         <div class="legend-item"><div class="legend-color" style="background: #27ae60; opacity: 0.9;"></div><span class="legend-label">0-500m</span></div>
@@ -79,10 +74,15 @@
 
     <div class="controls">
         <div class="control-group">
-            <label class="control-label" id="filter-label">Filtre Yükleniyor...</label>
-            <select id="dynamicFilter">
+            <label class="control-label">Taşınmaz Grubu Filtresi</label>
+            <select id="filterGroupSelect">
                 <option value="TÜMÜ">TÜMÜ GÖSTER</option>
-                </select>
+                <option value="ARSA">ARSA</option>
+                <option value="TARLA">TARLA</option>
+                <option value="KONUT">KONUT</option>
+                <option value="İŞYERİ">İŞYERİ</option>
+                <option value="DİĞER">DİĞER</option>
+            </select>
         </div>
         <div class="control-group">
             <label class="control-label">Maksimum Mesafe</label>
@@ -98,12 +98,39 @@
     </div>
 
     <script>
-        // === GELİŞTİRME 2.1: FİLTRE AYARI ===
-        // Lütfen 'geojson' dosyanızdaki hangi sütuna göre
-        // filtreleme yapmak istediğinizi buraya yazın.
-        // Örn: "Cins_Açıklama" veya "Kullanım_Durumu" veya "İl_Adı"
-        const FILTRE_SUTUNU = 'Cins_Açıklama';
-        // === FİLTRE AYARI BİTTİ ===
+        // === GELİŞTİRME 2.2: YENİ SINIFLANDIRMA FONKSİYONU ===
+        // Bu fonksiyon, "Kullanım Niteliği Tanımı"nı sizin 5 grubunuzdan birine çevirir.
+        function getFiltreGrubu(nitelik) {
+            if (!nitelik) {
+                return 'DİĞER'; // Boş verileri 'DİĞER' olarak sınıflandır
+            }
+            
+            // 1. ARSA grubu
+            if (nitelik === 'ARSA') {
+                return 'ARSA';
+            }
+            
+            // 2. TARLA grubu
+            if (nitelik === 'TARLA') {
+                return 'TARLA';
+            }
+
+            // 3. KONUT grubu
+            const konutGrubu = ['GELENEKSEL APARTMAN', 'GELENEKSEL DAİRE', 'MÜSTAKİL KONUT'];
+            if (konutGrubu.includes(nitelik)) {
+                return 'KONUT';
+            }
+            
+            // 4. İŞYERİ grubu
+            const isyeriGrubu = ['DÜKKAN/MAĞAZA', 'İŞYERİ/BÜRO', 'İŞ MERKEZİ/İŞ HANI'];
+            if (isyeriGrubu.includes(nitelik)) {
+                return 'İŞYERİ';
+            }
+
+            // 5. Kalanlar
+            return 'DİĞER';
+        }
+        // === GELİŞTİRME 2.2 BİTTİ ===
 
 
         // Initialize map
@@ -130,53 +157,25 @@
         fetch('kurum_tasinmazlari.geojson')
             .then(response => response.json())
             .then(data => {
+                
+                // === GELİŞTİRME 2.2: VERİ ÖN İŞLEME (SINIFLANDIRMA) ===
+                // 7,000 noktanın tamamı üzerinde dön
+                data.features.forEach(feature => {
+                    // 1. "Kullanım Niteliği Tanımı"nı al
+                    const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
+                    // 2. Yeni sanal özelliği (FiltreGrubu) oluştur
+                    feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
+                });
+                // === GELİŞTİRME 2.2 BİTTİ ===
+
                 allPoints = data.features;
                 filteredPoints = data.features;
-                console.log(`Loaded ${allPoints.length} points`);
-
-                // === GELİŞTİRME 2.1: DİNAMİK FİLTRE MENÜSÜ OLUŞTURMA ===
-                try {
-                    // 1. Filtre için kullanılacak benzersiz değerleri bul
-                    const uniqueValues = new Set();
-                    allPoints.forEach(feature => {
-                        const value = feature.properties[FILTRE_SUTUNU];
-                        if (value) { // Boş (null, undefined, "") değerleri alma
-                            uniqueValues.add(value.trim()); // trim() ile baş/son boşlukları al
-                        }
-                    });
-
-                    // 2. Benzersiz değerleri A-Z sırala
-                    const sortedValues = [...uniqueValues].sort((a, b) => a.localeCompare(b, 'tr')); // Türkçe karakterlere göre sırala
-
-                    // 3. Açılır listeyi (select) bul
-                    const filterSelect = document.getElementById('dynamicFilter');
-                    
-                    // 4. Arayüzdeki etiketi güncelle
-                    document.getElementById('filter-label').textContent = `${FILTRE_SUTUNU} Filtresi`;
-
-                    // 5. Listeyi doldur
-                    sortedValues.forEach(value => {
-                        const option = document.createElement('option');
-                        option.value = value;
-                        option.textContent = value; // Görünen metin
-                        filterSelect.appendChild(option);
-                    });
-                    
-                    console.log(`Filtre '${FILTRE_SUTUNU}' sütunundan ${sortedValues.length} benzersiz değerle dolduruldu.`);
-                    
-                } catch (e) {
-                    console.error('Dinamik filtre oluşturulurken hata:', e);
-                    console.error(`Hata notu: Lütfen 'FILTRE_SUTUNU' değişkeninin ("${FILTRE_SUTUNU}") geojson dosyanızda olduğundan emin olun.`);
-                    document.getElementById('filter-label').textContent = 'FİLTRE HATASI!';
-                    document.getElementById('filter-label').style.color = 'red';
-                }
-                // === GELİŞTİRME 2.1 BİTTİ ===
-
+                console.log(`Loaded ${allPoints.length} points and classified them into 'FiltreGrubu'.`);
                 
                 map.on('load', () => {
                     map.addSource('tasinmazlar', {
                         type: 'geojson',
-                        data: data
+                        data: data // Artık 'FiltreGrubu' özelliğini içeren güncellenmiş veriyi yükle
                     });
                     map.addLayer({
                         id: 'tasinmazlar-layer', type: 'circle', source: 'tasinmazlar',
@@ -202,7 +201,7 @@
                 map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: [] });
                 return;
             }
-            const mouseLon = lngLat.lng; const mouseLat = lngLat.lat;
+            const mouseLon = lngLat.lng; const mouseLat = latLng.lat;
             const pointsWithDistance = filteredPoints.map(point => {
                 const [lon, lat] = point.geometry.coordinates;
                 const distance = calculateDistance(mouseLon, mouseLat, lon, lat);
@@ -255,18 +254,21 @@
         });
 
 
-        // === GELİŞTİRME 2.1: FİLTRE DİNLEYİCİSİ GÜNCELLENDİ ===
-        // Artık 'dynamicFilter' ID'sini ve 'FILTRE_SUTUNU' değişkenini kullanıyor
-        document.getElementById('dynamicFilter').addEventListener('change', (e) => {
-            const selectedValue = e.target.value;
+        // === GELİŞTİRME 2.2: FİLTRE DİNLEYİCİSİ GÜNCELLENDİ ===
+        // Artık 'filterGroupSelect' ID'sini ve 'FiltreGrubu' sanal sütununu kullanıyor
+        document.getElementById('filterGroupSelect').addEventListener('change', (e) => {
+            const selectedGroup = e.target.value;
             
-            if (selectedValue === 'TÜMÜ') {
+            if (selectedGroup === 'TÜMÜ') {
                 map.setFilter('tasinmazlar-layer', null);
                 filteredPoints = allPoints;
             } else {
-                map.setFilter('tasinmazlar-layer', ['==', ['get', FILTRE_SUTUNU], selectedValue]);
+                // Filtreyi haritaya uygula
+                map.setFilter('tasinmazlar-layer', ['==', ['get', 'FiltreGrubu'], selectedGroup]);
+                
+                // Örümcek ağı listesini de filtrele
                 filteredPoints = allPoints.filter(feature => {
-                    return feature.properties[FILTRE_SUTUNU] === selectedValue;
+                    return feature.properties.FiltreGrubu === selectedGroup;
                 });
             }
             if (mousePosition && animationEnabled) {
@@ -285,8 +287,9 @@
             if (props.İl_Adı) html += `<strong>İl/İlçe:</strong> ${props.İl_Adı} / ${props.İlçe_Adı}<br>`;
             if (props.Mahalle) html += `<strong>Mahalle:</strong> ${props.Mahalle}<br>`;
             if (props.Ada) html += `<strong>Ada/Parsel:</strong> ${props.Ada} / ${props.Parsel}<br>`;
-            if (props.Cins_Açıklama) html += `<strong>Cinsi:</strong> ${props.Cins_Açıklama}<br>`;
-            if (props.Kullanım_Durumu) html += `<strong>Kullanım:</strong> ${props.Kullanım_Durumu}<br>`;
+            // Kullanım Niteliği Tanımı'nı göstermek Cins_Açıklama'dan daha mantıklı olabilir:
+            if (props['Kullanım_Niteliği_Tanımı']) html += `<strong>Kullanım Niteliği:</strong> ${props['Kullanım_Niteliği_Tanımı']}<br>`;
+            if (props.Kullanım_Durumu) html += `<strong>Kullanım Durumu:</strong> ${props.Kullanım_Durumu}<br>`;
             if (props.Yüz_Ölçüm) html += `<strong>Yüz Ölçüm:</strong> ${props.Yüz_Ölçüm} m²<br>`;
             html += `<hr><strong>Konum:</strong><br>${coords[1].toFixed(6)}, ${coords[0].toFixed(6)}`;
             html += `</div>`;
