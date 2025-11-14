@@ -7,27 +7,130 @@
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
-        /* ... Önceki <style> içeriğinizin tamamı buraya gelecek ... */
-        /* ... (Değişiklik yok, yer kaplamaması için kısalttım) ... */
-        body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-        .header { position: absolute; top: 20px; left: 20px; background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; max-width: 350px; }
-        .header h1 { margin: 0 0 10px 0; font-size: 24px; color: #e74c3c; }
-        .header .day { display: inline-block; background: #e74c3c; color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
-        .header p { margin: 5px 0; font-size: 14px; color: #555; line-height: 1.5; }
-        .stats { position: absolute; bottom: 20px; left: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; font-size: 14px; }
-        .stats-row { display: flex; justify-content: space-between; margin: 5px 0; gap: 20px; }
-        .stats-label { color: #666; font-weight: 500; }
-        .stats-value { color: #e74c3c; font-weight: bold; font-size: 16px; }
-        .legend { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; font-size: 13px; max-width: 280px; }
-        .legend h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
-        .legend-item { display: flex; align-items: center; margin: 8px 0; }
-        .legend-color { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
-        .legend-label { color: #666; }
-        .controls { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; }
-        .control-group { margin: 10px 0; }
-        .control-label { font-size: 12px; color: #666; margin-bottom: 5px; display: block; }
-        input[type="range"] { width: 200px; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+            max-width: 350px;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #e74c3c;
+        }
+        .header .day {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .header p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+        .stats {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+            font-size: 14px;
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            gap: 20px;
+        }
+        .stats-label {
+            color: #666;
+            font-weight: 500;
+        }
+        .stats-value {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+            font-size: 13px;
+            max-width: 280px;
+        }
+        .legend h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 5px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .legend-color {
+            width: 30px;
+            height: 3px;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        .legend-label {
+            color: #666;
+        }
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .control-group {
+            margin: 10px 0;
+        }
+        .control-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
         
         /* === GELİŞTİRME 2: FİLTRE İÇİN YENİ STİL === */
         select {
@@ -37,6 +140,7 @@
             border: 1px solid #ccc;
             background-color: white;
             font-size: 13px;
+            max-width: 200px; /* Genişliği ayarla */
         }
 
         .control-value { display: inline-block; margin-left: 10px; font-weight: bold; color: #e74c3c; min-width: 40px; }
@@ -52,10 +156,54 @@
 <body>
     <div id="map"></div>
     
-    <div class="header"> ... </div>
-    <div class="stats"> ... </div>
-    <div class="legend"> ... </div>
+    <div class="header">
+        <div class="day">AŞAMA 2</div>
+        <h1>Taşınmaz Ağı Haritası</h1>
+        <p>Kurumun <strong>~7,000</strong> taşınmaz noktası arasındaki bağlantı ağı.</p>
+        <p style="font-size: 12px; color: #888; margin-top: 10px;">
+            🖱️ Harita üzerinde gezinin - mouse konumuna göre taşınmazlar arası örümcek ağı oluşur.
+        </p>
+        <p style="font-size: 11px; color: #999; margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">
+            <strong>Veri Kaynağı:</strong><br>
+            Kurum Taşınmazları Verisi (GeoJSON)
+        </p>
+    </div>
 
+    <div class="stats">
+        <div class="stats-row">
+            <span class="stats-label">Aktif Bağlantı:</span>
+            <span class="stats-value" id="connectionCount">0</span>
+        </div>
+        <div class="stats-row">
+            <span class="stats-label">En Yakın Taşınmaz:</span>
+            <span class="stats-value" id="nearestDistance">-</span>
+        </div>
+    </div>
+
+    <div class="legend">
+        <h3>Bağlantı Mesafesi</h3>
+        
+        <div class="legend-item">
+            <div class="legend-color" style="background: #27ae60; opacity: 0.9;"></div>
+            <span class="legend-label">0-500m</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12; opacity: 0.8;"></div>
+            <span class="legend-label">500m-1km</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e67e22; opacity: 0.7;"></div>
+            <span class="legend-label">1-2km</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c; opacity: 0.5;"></div>
+            <span class="legend-label">2-3km</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #c0392b; opacity: 0.3;"></div>
+            <span class="legend-label">3km+</span>
+        </div>
+    </div>
     <div class="controls">
         <div class="control-group">
             <label class="control-label">Taşınmaz Cinsi Filtresi</label>
@@ -142,7 +290,6 @@
                             'circle-stroke-color': '#2980b9',
                             'circle-stroke-opacity': 0.8
                         }
-                        // Not: Filtreleme 'map.setFilter' ile yapılacak
                     });
 
                     // ... (spider-lines ve mouse-point katmanları, değişiklik yok) ...
@@ -164,8 +311,10 @@
         // === GELİŞTİRME 2: updateSpider GÜNCELLENDİ ===
         // Artık 'points' yerine 'filteredPoints' dizisini kullanıyor
         function updateSpider(lngLat) {
+            if (!map.getSource('spider-lines')) return; // Harita yüklenmeden çalışmasın
+
             // 'points.length' yerine 'filteredPoints.length' kontrol ediliyor
-            if (!map.getSource('spider-lines') || filteredPoints.length === 0) {
+            if (filteredPoints.length === 0) {
                 // Eğer filtre sonucu hiç nokta kalmadıysa, istatistikleri sıfırla
                 document.getElementById('connectionCount').textContent = '0';
                 document.getElementById('nearestDistance').textContent = '-';
@@ -184,12 +333,13 @@
                 return { point, distance }; 
             });
 
-            // Geri kalan hesaplamalar (sort, slice, stats) aynı
+            // Geri kalan hesaplamalar (sort, slice) aynı
             const nearestPoints = pointsWithDistance 
                 .filter(item => item.distance <= maxDistance)
                 .sort((a, b) => a.distance - b.distance)
                 .slice(0, maxConnections);
 
+            // === DÜZELTME: İstatistik paneli artık var, kod çalışacak ===
             document.getElementById('connectionCount').textContent = nearestPoints.length;
             if (nearestPoints.length > 0) {
                 const nearest = nearestPoints[0].distance;
@@ -198,8 +348,9 @@
             } else {
                 document.getElementById('nearestDistance').textContent = '-';
             }
+            // === DÜZELTME BİTTİ ===
 
-            // Çizgi oluşturma kısmı aynı
+            // Çizgi oluşturma kısmı (Artık bu satıra ulaşabilecek)
             const lineFeatures = nearestPoints.map(item => {
                 const [lon, lat] = item.point.geometry.coordinates; 
                 const style = getColorForDistance(item.distance);
@@ -218,8 +369,8 @@
             });
         }
 
-        // === GELİŞTİRME 1: İPTAL EDİLDİ (DEBOUNCE KALDIRILDI) ===
-        // Anlık tepki için orijinal 'mousemove' olayı geri yüklendi.
+        // === GELİŞTİRME 1 (PERFORMANS) KALDIRILDI ===
+        // Anlık tepki için orijinal 'mousemove' olayı
         map.on('mousemove', (e) => {
             if (animationEnabled) {
                 mousePosition = e.lngLat;
@@ -236,7 +387,7 @@
         });
 
         // Controls (Kaydıraçlar)
-        // Debounce kaldırıldığı için, anlık 'updateSpider' çağrıları geri geldi.
+        // Performans değişikliği kaldırıldı, anlık güncelleme geri geldi
         document.getElementById('maxDistance').addEventListener('input', (e) => {
             maxDistance = parseInt(e.target.value);
             document.getElementById('maxDistanceValue').textContent = `${maxDistance}m`;
