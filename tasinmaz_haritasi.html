@@ -251,6 +251,24 @@
     </div>
 
     <script>
+        // === GELİŞTİRME 1: DEBOUNCE (PERFORMANS) ===
+        // Bir fonksiyonun çok sık çağrılmasını engelleyen yardımcı fonksiyon
+        // Bu fonksiyon, hesaplamanın fare her hareket ettiğinde değil,
+        // durduktan 100ms sonra sadece bir kez yapılmasını sağlar.
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        // === GELİŞTİRME 1 BİTTİ ===
+
+
         // Initialize map
         const map = new maplibregl.Map({
             container: 'map',
@@ -272,30 +290,25 @@
                     maxzoom: 22
                 }]
             },
-            // Türkiye'nin geneli için merkez ve zoom ayarı (veya verinizin ilk noktası için [27.5788, 39.7489] ve zoom: 10)
             center: [35.0000, 39.0000],
             zoom: 6,
             pitch: 0
         });
 
-        let points = []; // 'stops' değişken adını 'points' olarak değiştirdik
+        let points = []; 
         let mousePosition = null;
         let animationEnabled = true;
         let maxDistance = 3000;
         let maxConnections = 50;
 
         // Load points (taşınmaz) data
-        // *** DEĞİŞİKLİK 1: GeoJSON dosyasının yolu güncellendi ***
-        // 'iett_stops.geojson' yerine 'kurum_tasinmazlari.geojson' yüklendi.
-        // Dosyanın aynı klasörde olduğu varsayıldı.
         fetch('kurum_tasinmazlari.geojson')
             .then(response => response.json())
             .then(data => {
-                points = data.features; // Veriyi 'points' değişkenine ata
+                points = data.features; 
                 console.log(`Loaded ${points.length} points`);
                 
                 map.on('load', () => {
-                    // *** DEĞİŞİKLİK 2: Katman adları 'tasinmazlar' olarak güncellendi ***
                     map.addSource('tasinmazlar', {
                         type: 'geojson',
                         data: data
@@ -308,7 +321,7 @@
                         source: 'tasinmazlar',
                         paint: {
                             'circle-radius': 3,
-                            'circle-color': '#3498db', // Renk Mavi olarak kalsın (veya #e74c3c yapabilirsiniz)
+                            'circle-color': '#3498db', 
                             'circle-opacity': 0.6,
                             'circle-stroke-width': 1,
                             'circle-stroke-color': '#2980b9',
@@ -362,7 +375,6 @@
             });
 
         // Calculate distance between two points (Haversine formula)
-        // Bu fonksiyonu değiştirmeye gerek yok
         function calculateDistance(lon1, lat1, lon2, lat2) {
             const R = 6371e3; // Earth's radius in meters
             const φ1 = lat1 * Math.PI / 180;
@@ -379,7 +391,6 @@
         }
 
         // Get color based on distance
-        // Bu fonksiyonu değiştirmeye gerek yok
         function getColorForDistance(distance) {
             if (distance < 500) return { color: '#27ae60', opacity: 0.9, width: 2.5 };
             if (distance < 1000) return { color: '#f39c12', opacity: 0.8, width: 2.0 };
@@ -399,11 +410,11 @@
             const pointsWithDistance = points.map(point => {
                 const [lon, lat] = point.geometry.coordinates;
                 const distance = calculateDistance(mouseLon, mouseLat, lon, lat);
-                return { point, distance }; // 'stop' yerine 'point'
+                return { point, distance }; 
             });
 
             // Sort by distance and take closest ones within maxDistance
-            const nearestPoints = pointsWithDistance // 'nearestStops' -> 'nearestPoints'
+            const nearestPoints = pointsWithDistance 
                 .filter(item => item.distance <= maxDistance)
                 .sort((a, b) => a.distance - b.distance)
                 .slice(0, maxConnections);
@@ -420,14 +431,13 @@
 
             // Create line features
             const lineFeatures = nearestPoints.map(item => {
-                const [lon, lat] = item.point.geometry.coordinates; // 'item.stop' -> 'item.point'
+                const [lon, lat] = item.point.geometry.coordinates; 
                 const style = getColorForDistance(item.distance);
                 
                 return {
                     type: 'Feature',
                     properties: {
                         distance: item.distance,
-                        // 'item.point.properties.OBJECTID' gibi veriler eklenebilir ama zorunlu değil
                         color: style.color,
                         opacity: style.opacity,
                         width: style.width
@@ -460,13 +470,24 @@
             });
         }
 
-        // Mouse move handler
-        map.on('mousemove', (e) => {
+        // === GELİŞTİRME 1: MOUSEMOVE GÜNCELLEMESİ (DEBOUNCE) ===
+        // Orijinal 'map.on('mousemove', ...)' fonksiyonunu bu yeni
+        // performans odaklı 'debounced' versiyon ile değiştiriyoruz.
+        
+        // 1. updateSpider'ı çağıran ve 100ms gecikmeli çalışan
+        //    yeni bir "debounced" fonksiyon oluşturuyoruz.
+        const debouncedMouseMove = debounce(function(e) {
             if (animationEnabled) {
                 mousePosition = e.lngLat;
-                updateSpider(e.lngLat);
+                updateSpider(e.lngLat); // Asıl hesaplama fonksiyonunu çağır
             }
-        });
+        }, 100); // 100 milisaniye bekleme süresi (azaltıp arttırabilirsiniz)
+
+        // 2. Haritanın 'mousemove' olayına artık bu yeni
+        //    debounced fonksiyonu bağlıyoruz.
+        map.on('mousemove', debouncedMouseMove);
+        // === GELİŞTİRME 1 DEĞİŞİKLİĞİ BİTTİ ===
+
 
         // Mouse leave handler
         map.on('mouseleave', () => {
@@ -491,7 +512,9 @@
             maxDistance = parseInt(e.target.value);
             document.getElementById('maxDistanceValue').textContent = `${maxDistance}m`;
             if (mousePosition && animationEnabled) {
-                updateSpider(mousePosition);
+                // Kaydıracı oynatırken de 'debounce' kullanmak iyi bir fikir
+                // Bu yüzden doğrudan updateSpider yerine debouncedMouseMove'u tetikliyoruz
+                debouncedMouseMove({ lngLat: mousePosition });
             }
         });
 
@@ -499,7 +522,8 @@
             maxConnections = parseInt(e.target.value);
             document.getElementById('maxConnectionsValue').textContent = maxConnections;
             if (mousePosition && animationEnabled) {
-                updateSpider(mousePosition);
+                // Aynı şekilde, debounce kullanıyoruz
+                debouncedMouseMove({ lngLat: mousePosition });
             }
         });
 
@@ -522,18 +546,15 @@
             }
         });
 
-        // *** DEĞİŞİKLİK 3: Pop-up (Açılır Pencere) İçeriği Tamamen Güncellendi ***
-        // 'stops-layer' yerine 'tasinmazlar-layer' dinleniyor.
+        // Pop-up (Açılır Pencere)
         map.on('click', 'tasinmazlar-layer', (e) => {
             const feature = e.features[0];
             const coords = feature.geometry.coordinates.slice();
-            const props = feature.properties; // Bütün öznitelikleri 'props' değişkenine al
+            const props = feature.properties; 
             
-            // GeoJSON'daki verilerinize göre HTML içeriğini oluştur
             let html = `<div class="popup-container">`;
             html += `<div class="popup-title">Taşınmaz Bilgisi</div>`;
             
-            // Hata almamak için verinin var olup olmadığını kontrol ederek ekleyin
             if (props.Tapu_Sicil) html += `<strong>Tapu Sicil:</strong> ${props.Tapu_Sicil}<br>`;
             if (props.KN_No) html += `<strong>KN No:</strong> ${props.KN_No}<br>`;
             if (props.İl_Adı) html += `<strong>İl/İlçe:</strong> ${props.İl_Adı} / ${props.İlçe_Adı}<br>`;
@@ -552,8 +573,7 @@
                 .addTo(map);
         });
 
-        // *** DEĞİŞİKLİK 4: Cursor (Fare İmla) Katman Adı Güncellendi ***
-        // 'stops-layer' yerine 'tasinmazlar-layer' kullanıldı.
+        // Cursor (Fare İmla)
         map.on('mouseenter', 'tasinmazlar-layer', () => {
             map.getCanvas().style.cursor = 'pointer';
         });
