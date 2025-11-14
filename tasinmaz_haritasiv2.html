@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network - Kurum Taşınmazları Ağı</title>
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+        .header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+            max-width: 350px;
+        }
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            color: #e74c3c;
+        }
+        .header .day {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .header p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.5;
+        }
+        .stats {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+            font-size: 14px;
+        }
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+            gap: 20px;
+        }
+        .stats-label {
+            color: #666;
+            font-weight: 500;
+        }
+        .stats-value {
+            color: #e74c3c;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .legend {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+            font-size: 13px;
+            max-width: 280px;
+        }
+        .legend h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #333;
+            border-bottom: 2px solid #e74c3c;
+            padding-bottom: 5px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+        }
+        .legend-color {
+            width: 30px;
+            height: 3px;
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        .legend-label {
+            color: #666;
+        }
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .control-group {
+            margin: 10px 0;
+        }
+        .control-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+            display: block;
+        }
+        input[type="range"] {
+            width: 200px;
+        }
+        .control-value {
+            display: inline-block;
+            margin-left: 10px;
+            font-weight: bold;
+            color: #e74c3c;
+            min-width: 40px;
+        }
+        button {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            margin: 5px 0;
+            width: 100%;
+        }
+        button:hover {
+            background: #c0392b;
+        }
+        
+        /* Pop-up için stil ayarları */
+        .maplibregl-popup-content {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .popup-container {
+            min-width: 220px; 
+            max-height: 250px; 
+            overflow-y: auto;
+            font-size: 13px;
+        }
+        .popup-container strong {
+            color: #333;
+            font-size: 12px;
+        }
+        .popup-container hr {
+            border: none;
+            height: 1px;
+            background: #eee;
+            margin: 6px 0;
+        }
+        .popup-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #e74c3c;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <div class="header">
+        <div class="day">AŞAMA 2</div>
+        <h1>Taşınmaz Ağı Haritası</h1>
+        <p>Kurumun <strong>~7,000</strong> taşınmaz noktası arasındaki bağlantı ağı.</p>
+        <p style="font-size: 12px; color: #888; margin-top: 10px;">
+            🖱️ Harita üzerinde gezinin - mouse konumuna göre taşınmazlar arası örümcek ağı oluşur.
+        </p>
+        <p style="font-size: 11px; color: #999; margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">
+            <strong>Veri Kaynağı:</strong><br>
+            Kurum Taşınmazları Verisi (GeoJSON)
+        </p>
+    </div>
+
+    <div class="stats">
+        <div class="stats-row">
+            <span class="stats-label">Aktif Bağlantı:</span>
+            <span class="stats-value" id="connectionCount">0</span>
+        </div>
+        <div class="stats-row">
+            <span class="stats-label">En Yakın Taşınmaz:</span>
+            <span class="stats-value" id="nearestDistance">-</span>
+        </div>
+    </div>
+
+    <div class="legend">
+        <h3>Bağlantı Mesafesi</h3>
+        
+        <div class="legend-item">
+            <div class="legend-color" style="background: #27ae60; opacity: 0.9;"></div>
+            <span class="legend-label">0-500m</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #f39c12; opacity: 0.8;"></div>
+            <span class="legend-label">500m-1km</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e67e22; opacity: 0.7;"></div>
+            <span class="legend-label">1-2km</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #e74c3c; opacity: 0.5;"></div>
+            <span class="legend-label">2-3km</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background: #c0392b; opacity: 0.3;"></div>
+            <span class="legend-label">3km+</span>
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="control-group">
+            <label class="control-label">Maksimum Mesafe</label>
+            <input type="range" id="maxDistance" min="500" max="5000" step="100" value="3000">
+            <span class="control-value" id="maxDistanceValue">3000m</span>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Maksimum Taşınmaz</label>
+            <input type="range" id="maxConnections" min="10" max="200" step="10" value="50">
+            <span class="control-value" id="maxConnectionsValue">50</span>
+        </div>
+        <button id="toggleAnimation">Animasyonu Durdur</button>
+    </div>
+
+    <script>
+        // === GELİŞTİRME 1: DEBOUNCE (PERFORMANS) ===
+        // Bir fonksiyonun çok sık çağrılmasını engelleyen yardımcı fonksiyon
+        // Bu fonksiyon, hesaplamanın fare her hareket ettiğinde değil,
+        // durduktan 100ms sonra sadece bir kez yapılmasını sağlar.
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+        // === GELİŞTİRME 1 BİTTİ ===
+
+
+        // Initialize map
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: {
+                version: 8,
+                sources: {
+                    'carto-light': {
+                        type: 'raster',
+                        tiles: ['https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'],
+                        tileSize: 256,
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    }
+                },
+                layers: [{
+                    id: 'carto-light-layer',
+                    type: 'raster',
+                    source: 'carto-light',
+                    minzoom: 0,
+                    maxzoom: 22
+                }]
+            },
+            center: [35.0000, 39.0000],
+            zoom: 6,
+            pitch: 0
+        });
+
+        let points = []; 
+        let mousePosition = null;
+        let animationEnabled = true;
+        let maxDistance = 3000;
+        let maxConnections = 50;
+
+        // Load points (taşınmaz) data
+        fetch('kurum_tasinmazlari.geojson')
+            .then(response => response.json())
+            .then(data => {
+                points = data.features; 
+                console.log(`Loaded ${points.length} points`);
+                
+                map.on('load', () => {
+                    map.addSource('tasinmazlar', {
+                        type: 'geojson',
+                        data: data
+                    });
+
+                    // Nokta katmanı (Taşınmazlar)
+                    map.addLayer({
+                        id: 'tasinmazlar-layer',
+                        type: 'circle',
+                        source: 'tasinmazlar',
+                        paint: {
+                            'circle-radius': 3,
+                            'circle-color': '#3498db', 
+                            'circle-opacity': 0.6,
+                            'circle-stroke-width': 1,
+                            'circle-stroke-color': '#2980b9',
+                            'circle-stroke-opacity': 0.8
+                        }
+                    });
+
+                    // Add empty line source for spider connections
+                    map.addSource('spider-lines', {
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: []
+                        }
+                    });
+
+                    map.addLayer({
+                        id: 'spider-lines-layer',
+                        type: 'line',
+                        source: 'spider-lines',
+                        paint: {
+                            'line-width': ['get', 'width'],
+                            'line-color': ['get', 'color'],
+                            'line-opacity': ['get', 'opacity']
+                        }
+                    });
+
+                    // Add highlight point for mouse position
+                    map.addSource('mouse-point', {
+                        type: 'geojson',
+                        data: {
+                            type: 'FeatureCollection',
+                            features: []
+                        }
+                    });
+
+                    map.addLayer({
+                        id: 'mouse-point-layer',
+                        type: 'circle',
+                        source: 'mouse-point',
+                        paint: {
+                            'circle-radius': 8,
+                            'circle-color': '#e74c3c',
+                            'circle-opacity': 0.8,
+                            'circle-stroke-width': 2,
+                            'circle-stroke-color': '#ffffff',
+                            'circle-stroke-opacity': 1
+                        }
+                    });
+                });
+            });
+
+        // Calculate distance between two points (Haversine formula)
+        function calculateDistance(lon1, lat1, lon2, lat2) {
+            const R = 6371e3; // Earth's radius in meters
+            const φ1 = lat1 * Math.PI / 180;
+            const φ2 = lat2 * Math.PI / 180;
+            const Δφ = (lat2 - lat1) * Math.PI / 180;
+            const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c;
+        }
+
+        // Get color based on distance
+        function getColorForDistance(distance) {
+            if (distance < 500) return { color: '#27ae60', opacity: 0.9, width: 2.5 };
+            if (distance < 1000) return { color: '#f39c12', opacity: 0.8, width: 2.0 };
+            if (distance < 2000) return { color: '#e67e22', opacity: 0.7, width: 1.5 };
+            if (distance < 3000) return { color: '#e74c3c', opacity: 0.5, width: 1.2 };
+            return { color: '#c0392b', opacity: 0.3, width: 1.0 };
+        }
+
+        // Update spider connections
+        function updateSpider(lngLat) {
+            if (!map.getSource('spider-lines') || points.length === 0) return;
+
+            const mouseLon = lngLat.lng;
+            const mouseLat = lngLat.lat;
+
+            // Calculate distances to all points
+            const pointsWithDistance = points.map(point => {
+                const [lon, lat] = point.geometry.coordinates;
+                const distance = calculateDistance(mouseLon, mouseLat, lon, lat);
+                return { point, distance }; 
+            });
+
+            // Sort by distance and take closest ones within maxDistance
+            const nearestPoints = pointsWithDistance 
+                .filter(item => item.distance <= maxDistance)
+                .sort((a, b) => a.distance - b.distance)
+                .slice(0, maxConnections);
+
+            // Update stats
+            document.getElementById('connectionCount').textContent = nearestPoints.length;
+            if (nearestPoints.length > 0) {
+                const nearest = nearestPoints[0].distance;
+                document.getElementById('nearestDistance').textContent = 
+                    nearest < 1000 ? `${Math.round(nearest)}m` : `${(nearest/1000).toFixed(2)}km`;
+            } else {
+                document.getElementById('nearestDistance').textContent = '-';
+            }
+
+            // Create line features
+            const lineFeatures = nearestPoints.map(item => {
+                const [lon, lat] = item.point.geometry.coordinates; 
+                const style = getColorForDistance(item.distance);
+                
+                return {
+                    type: 'Feature',
+                    properties: {
+                        distance: item.distance,
+                        color: style.color,
+                        opacity: style.opacity,
+                        width: style.width
+                    },
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: [
+                            [mouseLon, mouseLat],
+                            [lon, lat]
+                        ]
+                    }
+                };
+            });
+
+            map.getSource('spider-lines').setData({
+                type: 'FeatureCollection',
+                features: lineFeatures
+            });
+
+            // Update mouse point
+            map.getSource('mouse-point').setData({
+                type: 'FeatureCollection',
+                features: [{
+                    type: 'Feature',
+                    geometry: {
+                        type: 'Point',
+                        coordinates: [mouseLon, mouseLat]
+                    }
+                }]
+            });
+        }
+
+        // === GELİŞTİRME 1: MOUSEMOVE GÜNCELLEMESİ (DEBOUNCE) ===
+        // Orijinal 'map.on('mousemove', ...)' fonksiyonunu bu yeni
+        // performans odaklı 'debounced' versiyon ile değiştiriyoruz.
+        
+        // 1. updateSpider'ı çağıran ve 100ms gecikmeli çalışan
+        //    yeni bir "debounced" fonksiyon oluşturuyoruz.
+        const debouncedMouseMove = debounce(function(e) {
+            if (animationEnabled) {
+                mousePosition = e.lngLat;
+                updateSpider(e.lngLat); // Asıl hesaplama fonksiyonunu çağır
+            }
+        }, 100); // 100 milisaniye bekleme süresi (azaltıp arttırabilirsiniz)
+
+        // 2. Haritanın 'mousemove' olayına artık bu yeni
+        //    debounced fonksiyonu bağlıyoruz.
+        map.on('mousemove', debouncedMouseMove);
+        // === GELİŞTİRME 1 DEĞİŞİKLİĞİ BİTTİ ===
+
+
+        // Mouse leave handler
+        map.on('mouseleave', () => {
+            if (map.getSource('spider-lines')) {
+                map.getSource('spider-lines').setData({
+                    type: 'FeatureCollection',
+                    features: []
+                });
+            }
+            if (map.getSource('mouse-point')) {
+                map.getSource('mouse-point').setData({
+                    type: 'FeatureCollection',
+                    features: []
+                });
+            }
+            document.getElementById('connectionCount').textContent = '0';
+            document.getElementById('nearestDistance').textContent = '-';
+        });
+
+        // Controls
+        document.getElementById('maxDistance').addEventListener('input', (e) => {
+            maxDistance = parseInt(e.target.value);
+            document.getElementById('maxDistanceValue').textContent = `${maxDistance}m`;
+            if (mousePosition && animationEnabled) {
+                // Kaydıracı oynatırken de 'debounce' kullanmak iyi bir fikir
+                // Bu yüzden doğrudan updateSpider yerine debouncedMouseMove'u tetikliyoruz
+                debouncedMouseMove({ lngLat: mousePosition });
+            }
+        });
+
+        document.getElementById('maxConnections').addEventListener('input', (e) => {
+            maxConnections = parseInt(e.target.value);
+            document.getElementById('maxConnectionsValue').textContent = maxConnections;
+            if (mousePosition && animationEnabled) {
+                // Aynı şekilde, debounce kullanıyoruz
+                debouncedMouseMove({ lngLat: mousePosition });
+            }
+        });
+
+        document.getElementById('toggleAnimation').addEventListener('click', () => {
+            animationEnabled = !animationEnabled;
+            const btn = document.getElementById('toggleAnimation');
+            btn.textContent = animationEnabled ? 'Animasyonu Durdur' : 'Animasyonu Başlat';
+            
+            if (!animationEnabled) {
+                map.getSource('spider-lines').setData({
+                    type: 'FeatureCollection',
+                    features: []
+                });
+                map.getSource('mouse-point').setData({
+                    type: 'FeatureCollection',
+                    features: []
+                });
+            } else if (mousePosition) {
+                updateSpider(mousePosition);
+            }
+        });
+
+        // Pop-up (Açılır Pencere)
+        map.on('click', 'tasinmazlar-layer', (e) => {
+            const feature = e.features[0];
+            const coords = feature.geometry.coordinates.slice();
+            const props = feature.properties; 
+            
+            let html = `<div class="popup-container">`;
+            html += `<div class="popup-title">Taşınmaz Bilgisi</div>`;
+            
+            if (props.Tapu_Sicil) html += `<strong>Tapu Sicil:</strong> ${props.Tapu_Sicil}<br>`;
+            if (props.KN_No) html += `<strong>KN No:</strong> ${props.KN_No}<br>`;
+            if (props.İl_Adı) html += `<strong>İl/İlçe:</strong> ${props.İl_Adı} / ${props.İlçe_Adı}<br>`;
+            if (props.Mahalle) html += `<strong>Mahalle:</strong> ${props.Mahalle}<br>`;
+            if (props.Ada) html += `<strong>Ada/Parsel:</strong> ${props.Ada} / ${props.Parsel}<br>`;
+            if (props.Cins_Açıklama) html += `<strong>Cinsi:</strong> ${props.Cins_Açıklama}<br>`;
+            if (props.Kullanım_Durumu) html += `<strong>Kullanım:</strong> ${props.Kullanım_Durumu}<br>`;
+            if (props.Yüz_Ölçüm) html += `<strong>Yüz Ölçüm:</strong> ${props.Yüz_Ölçüm} m²<br>`;
+            
+            html += `<hr><strong>Konum:</strong><br>${coords[1].toFixed(6)}, ${coords[0].toFixed(6)}`;
+            html += `</div>`;
+            
+            new maplibregl.Popup({ closeOnClick: true, maxWidth: '240px' })
+                .setLngLat(coords)
+                .setHTML(html)
+                .addTo(map);
+        });
+
+        // Cursor (Fare İmla)
+        map.on('mouseenter', 'tasinmazlar-layer', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+
+        map.on('mouseleave', 'tasinmazlar-layer', () => {
+            map.getCanvas().style.cursor = '';
+        });
+    </script>
+</body>
+</html>
