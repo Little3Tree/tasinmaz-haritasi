@@ -23,53 +23,37 @@
         .legend-item { display: flex; align-items: center; margin: 8px 0; }
         .legend-color { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
         .legend-label { color: #666; }
-        .controls { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; max-width: 220px; }
+        
+        /* Kontrol panelinin maksimum genişliğini artır */
+        .controls { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; max-width: 240px; max-height: 80vh; overflow-y: auto; }
+        
         .control-group { margin: 10px 0; }
         .control-label { font-size: 12px; color: #666; margin-bottom: 5px; display: block; }
         input[type="range"] { width: 100%; }
         select { width: 100%; padding: 8px 5px; border-radius: 5px; border: 1px solid #ccc; background-color: white; font-size: 13px; }
+        
+        /* İlçe filtresi için pasif stil */
+        select:disabled { background-color: #f0f0f0; color: #999; }
+        
         .control-value { display: inline-block; margin-left: 10px; font-weight: bold; color: #e74c3c; min-width: 40px; }
         button { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 13px; margin: 5px 0; width: 100%; }
         button:hover { background: #c0392b; }
+        
+        /* YENİ: Temizle Butonu Stili */
+        #clearFiltersButton { background-color: #7f8c8d; }
+        #clearFiltersButton:hover { background-color: #6c7a7d; }
+        
         .maplibregl-popup-content { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; box-shadow: 0 2px 10px rgba(0,0,0,0.15); border-radius: 8px; padding: 12px; }
         .popup-container { min-width: 220px; max-height: 250px; overflow-y: auto; font-size: 13px; }
         .popup-container strong { color: #333; font-size: 12px; }
         .popup-container hr { border: none; height: 1px; background: #eee; margin: 6px 0; }
         .popup-title { font-size: 16px; font-weight: 600; color: #e74c3c; margin-bottom: 5px; }
-
-        /* === GELİŞTİRME 3.1: ARAMA STİLLERİ GÜNCELLENDİ === */
-        input[type="text"] {
-            width: 100%;
-            padding: 8px 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            background-color: white;
-            font-size: 13px;
-            box-sizing: border-box; 
-        }
-        .search-container {
-            display: flex;
-            gap: 5px; 
-        }
-        .search-container input {
-            width: 100%;
-            flex-grow: 1; /* Alanı doldur */
-        }
-        .search-container button {
-            width: auto; /* Otomatik genişlik */
-            margin: 0;
-            padding: 8px 10px;
-            flex-shrink: 0; /* Küçülme */
-        }
-        
-        /* Ada/Parsel için özel stil */
-        .ada-parsel-container {
-            display: flex;
-            gap: 5px;
-        }
-        .ada-parsel-container input {
-            width: 50%; /* İki kutu yan yana */
-        }
+        input[type="text"] { width: 100%; padding: 8px 5px; border-radius: 5px; border: 1px solid #ccc; background-color: white; font-size: 13px; box-sizing: border-box; }
+        .search-container { display: flex; gap: 5px; }
+        .search-container input { width: 100%; flex-grow: 1; }
+        .search-container button { width: auto; margin: 0; padding: 8px 10px; flex-shrink: 0; }
+        .ada-parsel-container { display: flex; gap: 5px; }
+        .ada-parsel-container input { width: 50%; }
     </style>
 </head>
 <body>
@@ -79,7 +63,7 @@
     <div class="stats"> ... (içerik aynı) ... </div>
     <div class="legend"> ... (içerik aynı) ... </div>
     <div class="header">
-        <div class="day">AŞAMA 3.1</div>
+        <div class="day">AŞAMA 4</div>
         <h1>Taşınmaz Ağı Haritası</h1>
         <p>Kurumun <strong>~7,000</strong> taşınmaz noktası arasındaki bağlantı ağı.</p>
         <p style="font-size: 12px; color: #888; margin-top: 10px;">
@@ -118,7 +102,6 @@
                 <button id="tapuSearchButton">Ara</button>
             </div>
         </div>
-
         <div class="control-group">
             <label class="control-label">Ada / Parsel ile Ara</label>
             <div class="ada-parsel-container">
@@ -139,7 +122,25 @@
                 <option value="DİĞER">DİĞER</option>
             </select>
         </div>
+
+        <div class="control-group">
+            <label class="control-label">İl Filtresi</label>
+            <select id="ilFilter">
+                <option value="TÜMÜ">TÜM İLLER</option>
+                </select>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label">İlçe Filtresi</label>
+            <select id="ilceFilter" disabled>
+                <option value="TÜMÜ">TÜM İLÇELER</option>
+                </select>
+        </div>
         
+        <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
+             <button id="clearFiltersButton">Arama/Filtreleri Temizle</button>
+        </div>
+
         <div class="control-group">
             <label class="control-label">Maksimum Mesafe</label>
             <input type="range" id="maxDistance" min="500" max="5000" step="100" value="3000">
@@ -186,17 +187,52 @@
         let maxDistance = 3000;
         let maxConnections = 50;
 
-        // Veri Yükleme ve Sınıflandırma (Değişiklik yok)
+        // === GELİŞTİRME 4: YENİ VERİ YAPIILARI ===
+        // İl -> İlçe[] haritasını tutmak için
+        let ilceMap = new Map(); 
+
+        // Load points (taşınmaz) data
         fetch('kurum_tasinmazlari.geojson')
             .then(response => response.json())
             .then(data => {
+                
+                const ilSelect = document.getElementById('ilFilter');
+                const iller = new Set(); // Benzersiz illeri toplamak için
+
                 data.features.forEach(feature => {
+                    // 1. Sınıflandırmayı yap
                     const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
                     feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
+                    
+                    // === GELİŞTİRME 4: İL/İLÇE HARİTASI OLUŞTURMA ===
+                    const il = feature.properties['İl_Adı'];
+                    const ilce = feature.properties['İlçe_Adı'];
+                    
+                    if (il) {
+                        iller.add(il.trim()); // İl listesine ekle
+                        
+                        if (ilce) {
+                            if (!ilceMap.has(il)) {
+                                ilceMap.set(il, new Set()); // O il için yeni bir Set oluştur
+                            }
+                            ilceMap.get(il).add(ilce.trim()); // O ilin Set'ine ilçeyi ekle
+                        }
+                    }
                 });
+                
+                // İl Filtresini Doldur
+                const sortedIller = [...iller].sort((a, b) => a.localeCompare(b, 'tr'));
+                sortedIller.forEach(il => {
+                    const option = document.createElement('option');
+                    option.value = il;
+                    option.textContent = il;
+                    ilSelect.appendChild(option);
+                });
+                // === GELİŞTİRME 4 BİTTİ ===
+
                 allPoints = data.features;
                 filteredPoints = data.features;
-                console.log(`Loaded ${allPoints.length} points and classified them into 'FiltreGrubu'.`);
+                console.log(`Loaded ${allPoints.length} points.`);
                 
                 map.on('load', () => {
                     map.addSource('tasinmazlar', { type: 'geojson', data: data });
@@ -276,31 +312,102 @@
             } else if (mousePosition) { updateSpider(mousePosition); }
         });
 
-        // Filtre Dinleyicisi (Değişiklik yok)
-        document.getElementById('filterGroupSelect').addEventListener('change', (e) => {
-            const selectedGroup = e.target.value;
-            if (selectedGroup === 'TÜMÜ') {
-                map.setFilter('tasinmazlar-layer', null);
-                filteredPoints = allPoints;
-            } else {
-                map.setFilter('tasinmazlar-layer', ['==', ['get', 'FiltreGrubu'], selectedGroup]);
-                filteredPoints = allPoints.filter(feature => {
-                    return feature.properties.FiltreGrubu === selectedGroup;
-                });
+        // === GELİŞTİRME 4: YENİ FONKSİYONLAR ===
+        
+        // 1. Ana Filtreleme Fonksiyonu
+        //    Tüm filtreleri okur ve haritayı günceller
+        function applyAllFilters() {
+            const grup = document.getElementById('filterGroupSelect').value;
+            const il = document.getElementById('ilFilter').value;
+            const ilce = document.getElementById('ilceFilter').value;
+            
+            // MapLibre için filtre ifadesi
+            let mapFilter = ['all']; // Birden fazla koşul için 'all' kullan
+            
+            // JavaScript için filtreleme (Örümcek ağı için)
+            filteredPoints = allPoints.filter(feature => {
+                const props = feature.properties;
+                let grupMatch = (grup === 'TÜMÜ') || (props.FiltreGrubu === grup);
+                let ilMatch = (il === 'TÜMÜ') || (props['İl_Adı'] === il);
+                let ilceMatch = (ilce === 'TÜMÜ') || (props['İlçe_Adı'] === ilce);
+                return grupMatch && ilMatch && ilceMatch;
+            });
+            
+            // MapLibre (mavi noktalar) filtresini oluştur
+            if (grup !== 'TÜMÜ') {
+                mapFilter.push(['==', ['get', 'FiltreGrubu'], grup]);
             }
+            if (il !== 'TÜMÜ') {
+                mapFilter.push(['==', ['get', 'İl_Adı'], il]);
+            }
+            if (ilce !== 'TÜMÜ') {
+                mapFilter.push(['==', ['get', 'İlçe_Adı'], ilce]);
+            }
+            
+            // Filtreyi haritaya uygula
+            map.setFilter('tasinmazlar-layer', mapFilter.length > 1 ? mapFilter : null);
+
+            // Örümcek ağını güncelle
             if (mousePosition && animationEnabled) {
                 updateSpider(mousePosition);
             }
-        });
-
-
-        // === GELİŞTİRME 3.1: POPUP FONKSİYONU VE ARAMA MANTIĞI ===
+        }
         
-        // Pop-up Fonksiyonu (Yeniden kullanılabilir)
-        function showPopup(feature) {
-            const coords = feature.geometry.coordinates.slice();
-            const props = feature.properties; 
+        // 2. İlçe Listesini Güncelleme Fonksiyonu
+        function updateIlceFilter() {
+            const selectedIl = document.getElementById('ilFilter').value;
+            const ilceSelect = document.getElementById('ilceFilter');
             
+            ilceSelect.innerHTML = '<option value="TÜMÜ">TÜM İLÇELER</option>'; // Temizle ve "TÜMÜ" ekle
+            
+            if (selectedIl === 'TÜMÜ') {
+                ilceSelect.disabled = true; // İl seçilmemişse pasif yap
+            } else {
+                ilceSelect.disabled = false; // Aktif yap
+                const ilceler = ilceMap.get(selectedIl);
+                if (ilceler) {
+                    const sortedIlceler = [...ilceler].sort((a, b) => a.localeCompare(b, 'tr'));
+                    sortedIlceler.forEach(ilce => {
+                        const option = document.createElement('option');
+                        option.value = ilce;
+                        option.textContent = ilce;
+                        ilceSelect.appendChild(option);
+                    });
+                }
+            }
+        }
+        
+        // 3. Tüm Filtreleri Temizleme Fonksiyonu
+        function clearAll() {
+            // Arama kutularını temizle
+            document.getElementById('tapuInput').value = '';
+            document.getElementById('adaInput').value = '';
+            document.getElementById('parselInput').value = '';
+            
+            // Filtre listelerini sıfırla
+            document.getElementById('filterGroupSelect').value = 'TÜMÜ';
+            document.getElementById('ilFilter').value = 'TÜMÜ';
+            
+            // İlçe filtresini sıfırla ve pasif hale getir
+            updateIlceFilter(); 
+            
+            // Ana filtre fonksiyonunu çağır (tüm haritayı göstermek için)
+            applyAllFilters();
+        }
+
+        // === FİLTRE DİNLEYİCİLERİ GÜNCELLENDİ ===
+        document.getElementById('filterGroupSelect').addEventListener('change', applyAllFilters);
+        document.getElementById('ilFilter').addEventListener('change', () => {
+            updateIlceFilter(); // Önce ilçeleri güncelle
+            applyAllFilters();  // Sonra tüm haritayı filtrele
+        });
+        document.getElementById('ilceFilter').addEventListener('change', applyAllFilters);
+        document.getElementById('clearFiltersButton').addEventListener('click', clearAll);
+
+
+        // Pop-up Fonksiyonu ve Tıklama (Değişiklik yok)
+        function showPopup(feature) {
+            const coords = feature.geometry.coordinates.slice(); const props = feature.properties; 
             let html = `<div class="popup-container">`;
             html += `<div class="popup-title">Taşınmaz Bilgisi</div>`;
             if (props.Tapu_Sicil) html += `<strong>Tapu Sicil:</strong> ${props.Tapu_Sicil}<br>`;
@@ -313,60 +420,37 @@
             if (props.Yüz_Ölçüm) html += `<strong>Yüz Ölçüm:</strong> ${props.Yüz_Ölçüm} m²<br>`;
             html += `<hr><strong>Konum:</strong><br>${coords[1].toFixed(6)}, ${coords[0].toFixed(6)}`;
             html += `</div>`;
-            
-            new maplibregl.Popup({ closeOnClick: true, maxWidth: '240px' })
-                .setLngLat(coords)
-                .setHTML(html)
-                .addTo(map);
+            new maplibregl.Popup({ closeOnClick: true, maxWidth: '240px' }).setLngLat(coords).setHTML(html).addTo(map);
         }
-
-        // Tıklama ile Pop-up (Değişiklik yok)
-        map.on('click', 'tasinmazlar-layer', (e) => {
-            showPopup(e.features[0]);
-        });
+        map.on('click', 'tasinmazlar-layer', (e) => { showPopup(e.features[0]); });
         
-        // Arama için ortak fonksiyon
+        // Arama Fonksiyonları (GÜNCELLENDİ: 'clearAll' çağrısı eklendi)
         function findAndFly(result) {
             if (result) {
-                // BAŞARILI: Taşınmaz bulundu
-                document.getElementById('filterGroupSelect').value = 'TÜMÜ';
-                map.setFilter('tasinmazlar-layer', null);
-                filteredPoints = allPoints;
-                map.flyTo({
-                    center: result.geometry.coordinates,
-                    zoom: 17,
-                    speed: 1.5
-                });
+                // ARAMA BAŞARILI: Önce tüm filtreleri temizle
+                clearAll(); 
+                
+                // Sonra uç ve pop-up aç
+                map.flyTo({ center: result.geometry.coordinates, zoom: 17, speed: 1.5 });
                 showPopup(result);
             } else {
-                // BAŞARISIZ
                 alert('Taşınmaz bulunamadı.\nLütfen tam ve doğru bir değer girin.');
             }
         }
 
-        // YENİ: Tapu Sicil Arama Dinleyicisi
         document.getElementById('tapuSearchButton').addEventListener('click', () => {
             const searchTerm = document.getElementById('tapuInput').value.trim();
             if (!searchTerm) return;
-            
-            // Karşılaştırma yaparken iki tarafı da metne (String) çevirmek en garantisidir
             const result = allPoints.find(feature => {
                  return String(feature.properties.Tapu_Sicil).trim() === searchTerm;
             });
             findAndFly(result);
         });
 
-        // YENİ: Ada/Parsel Arama Dinleyicisi
         document.getElementById('adaParselSearchButton').addEventListener('click', () => {
             const adaTerm = document.getElementById('adaInput').value.trim();
             const parselTerm = document.getElementById('parselInput').value.trim();
-            
-            if (!adaTerm || !parselTerm) {
-                alert('Lütfen hem Ada hem de Parsel numarasını girin.');
-                return;
-            }
-
-            // Ada VE Parsel'in EŞLEŞTİĞİ ilk kaydı bul
+            if (!adaTerm || !parselTerm) { alert('Lütfen hem Ada hem de Parsel numarasını girin.'); return; }
             const result = allPoints.find(feature => {
                 const propAda = String(feature.properties.Ada).trim();
                 const propParsel = String(feature.properties.Parsel).trim();
