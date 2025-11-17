@@ -10,7 +10,9 @@
         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
-        /* SOL PANEL YERLEŞİMİ */
+        /* === DÜZELTME: KOYU TEMA / ŞEFFAF PANELLER === */
+
+        /* Sol Ana Kutu */
         .left-panel-container {
             position: absolute;
             top: 20px;
@@ -22,8 +24,11 @@
             flex-direction: column;
             gap: 10px; 
         }
+
+        /* Başlık Paneli (Koyu Tema) */
         .header { 
-            background: rgba(255, 255, 255, 0.85); 
+            background: rgba(40, 40, 40, 0.85); /* Koyu şeffaf */
+            color: #f5f5f5; /* Açık renk yazı */
             padding: 10px 15px; 
             border-radius: 8px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
@@ -32,26 +37,31 @@
         }
         .header h1 { margin: 0 0 5px 0; font-size: 20px; color: #e74c3c; }
         .header .day { padding: 3px 8px; font-size: 10px; margin-bottom: 8px; background: #e74c3c; color: white; border-radius: 4px; display: inline-block; font-weight: bold; }
-        .header p { margin: 4px 0; font-size: 13px; color: #444; line-height: 1.4; }
+        .header p { margin: 4px 0; font-size: 13px; color: #f5f5f5; line-height: 1.4; }
+        .header p strong { color: white; }
 
+        /* Sıfırla Butonu (Nötr Koyu Tema) */
         #resetViewButton {
-            background-color: #3498DB;
+            background-color: #555; /* Nötr Koyu */
             width: 100%;
             box-sizing: border-box;
+            border: 1px solid #888;
         }
-        #resetViewButton:hover { background-color: #2980b9; }
+        #resetViewButton:hover { background-color: #777; }
 
+        /* Kontrol Paneli (Koyu Tema) */
         .controls { 
             width: 100%;
             box-sizing: border-box;
         }
-
-        /* SAĞ ÜST PANEL (İstatistik) */
+        
+        /* Sağ Üst Panel (Koyu Tema) */
         .stats { 
             position: absolute; 
             top: 20px; 
             right: 20px; 
-            background: rgba(255, 255, 255, 0.9); 
+            background: rgba(40, 40, 40, 0.85); /* Koyu şeffaf */
+            color: #f5f5f5; /* Açık renk yazı */
             padding: 10px 15px; 
             border-radius: 8px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
@@ -59,11 +69,10 @@
             font-size: 13px; 
             min-width: 180px;
         }
-        .stats-row { display: flex; justify-content: space-between; margin: 4px 0; gap: 15px; }
-        .stats-label { color: #555; font-weight: 500; }
+        .stats-label { color: #ccc; font-weight: 500; }
         .stats-value { color: #e74c3c; font-weight: bold; font-size: 15px; }
         
-        /* SAĞ ALT PANEL (Lejant) - YAN YANA */
+        /* Sağ Alt Panel (Koyu Tema) */
         .legend-container {
             position: absolute;
             bottom: 20px;
@@ -73,19 +82,27 @@
             gap: 10px;
         }
         .legend-box {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(40, 40, 40, 0.85); /* Koyu şeffaf */
+            color: #f5f5f5; /* Açık renk yazı */
             padding: 15px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             font-size: 13px;
         }
-        .legend-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
+        .legend-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #f5f5f5; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
+        .legend-label { color: #ccc; }
+        
+        /* Lejant Ayırıcı (Açık renk) */
+        .legend-box h3:nth-of-type(2) {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #555; /* Koyu tema için açık çizgi */
+        }
         .legend-item { display: flex; align-items: center; margin: 8px 0; }
         .legend-color-circle { width: 15px; height: 15px; margin-right: 10px; border-radius: 50%; border: 1px solid #777; }
         .legend-color-line { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
-        .legend-label { color: #666; }
 
-        /* Açılır/Kapanır Panel Stilleri */
+        /* Açılır/Kapanır Panel Stilleri (Koyu Tema) */
         .controls-toggle {
             padding: 10px 15px;
             background: #e74c3c;
@@ -108,7 +125,8 @@
             transform: rotate(-90deg);
         }
         .controls-content {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(40, 40, 40, 0.9); /* Koyu şeffaf */
+            color: #f5f5f5; /* Açık renk yazı */
             padding: 15px;
             max-height: 70vh; 
             overflow-y: auto;
@@ -126,12 +144,24 @@
             visibility: hidden;
         }
         
+        /* Koyu Tema Form Elemanları */
+        .control-label { color: #ccc; }
+        input[type="text"], select {
+            width: 100%;
+            padding: 8px 5px;
+            border-radius: 5px;
+            border: 1px solid #777;
+            background-color: #555;
+            color: #fff;
+            font-size: 13px;
+            box-sizing: border-box;
+        }
+        select:disabled { background-color: #444; color: #888; }
+        .ada-parsel-container input { width: 50%; }
+
         /* Diğer stiller */
         .control-group { margin: 10px 0; }
-        .control-label { font-size: 12px; color: #666; margin-bottom: 5px; display: block; }
         input[type="range"] { width: 100%; }
-        select { width: 100%; padding: 8px 5px; border-radius: 5px; border: 1px solid #ccc; background-color: white; font-size: 13px; }
-        select:disabled { background-color: #f0f0f0; color: #999; }
         .control-value { display: inline-block; margin-left: 10px; font-weight: bold; color: #e74c3c; min-width: 40px; }
         button { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-size: 13px; margin: 5px 0; width: 100%; }
         button:hover { background: #c0392b; }
@@ -140,12 +170,9 @@
         .popup-container strong { color: #333; font-size: 12px; }
         .popup-container hr { border: none; height: 1px; background: #eee; margin: 6px 0; }
         .popup-title { font-size: 16px; font-weight: 600; color: #e74c3c; margin-bottom: 5px; }
-        input[type="text"] { width: 100%; padding: 8px 5px; border-radius: 5px; border: 1px solid #ccc; background-color: white; font-size: 13px; box-sizing: border-box; }
         .search-container { display: flex; gap: 5px; }
         .search-container input { width: 100%; flex-grow: 1; }
         .search-container button { width: auto; margin: 0; padding: 8px 10px; flex-shrink: 0; }
-        .ada-parsel-container { display: flex; gap: 5px; }
-        .ada-parsel-container input { width: 50%; }
     </style>
 </head>
 <body>
@@ -164,10 +191,10 @@
 
     <div class="left-panel-container"> 
         <div class="header">
-            <div class="day">AŞAMA 10</div>
+            <div class="day">AŞAMA 11</div>
             <h1>Taşınmaz Ağı Haritası</h1>
             <p>Kurumun ~7,000 taşınmaz noktası arasındaki bağlantı ağı.</p>
-            <p style="font-size: 11px; color: #666; margin-top: 8px; border-top: 1px solid #ccc; padding-top: 8px;">
+            <p style="font-size: 11px; color: #ccc; margin-top: 8px; border-top: 1px solid #555; padding-top: 8px;">
                 <strong>Veri Kaynağı:</strong> Kurum Taşınmazları Verisi (GeoJSON)
             </p>
         </div>
@@ -195,7 +222,7 @@
                     </div>
                     <button id="adaParselSearchButton" style="margin-top: 5px;">Ara</button>
                 </div>
-                <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
+                <div class="control-group" style="border-top: 1px solid #555; padding-top: 10px;">
                     <label class="control-label">İl Filtresi</label>
                     <select id="ilFilter">
                         <option value="TÜMÜ">TÜM İLLER</option>
@@ -211,10 +238,10 @@
                     <label class="control-label">Taşınmaz Grubu Filtresi</label>
                     <select id="filterGroupSelect">
                         <option value="TÜMÜ">TÜMÜ GÖSTER</option>
-                        </select>
+                    </select>
                 </div>
                 
-                <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
+                <div class="control-group" style="border-top: 1px solid #555; padding-top: 10px;">
                     <label class="control-label">Maksimum Mesafe</label>
                     <input type="range" id="maxDistance" min="500" max="5000" step="100" value="3000">
                     <span class="control-value" id="maxDistanceValue">3000m</span>
@@ -245,8 +272,9 @@
             <div class="legend-item"><div class="legend-color-line" style="background: #c0392b; opacity: 0.3;"></div><span class="legend-label">3km+</span></div>
         </div>
     </div>
+
     <script>
-        // Sınıflandırma Fonksiyonu (Değişiklik yok)
+        // Sınıflandırma Fonksiyonu
         function getFiltreGrubu(nitelik) {
             if (!nitelik) { return 'DİĞER'; }
             if (nitelik === 'ARSA') { return 'ARSA'; }
@@ -258,13 +286,12 @@
             return 'DİĞER';
         }
         
-        // Global Değişkenler
-        // İSTEK 3: Türkiye zoom/center'ı padding'e göre ayarlandı
-        const TURKIYE_VIEW = { center: [39.0, 39.0], zoom: 5.5 }; 
+        // === DÜZELTME: TÜRKİYE ZOOM'U GERÇEK MERKEZE ALINDI ===
+        const TURKIYE_VIEW = { center: [35.0000, 39.0000], zoom: 6 }; 
         let currentPopup = null; 
         let ilceMap = new Map(); 
         let ilBboxMap = new Map(); 
-        let ilceBboxMap = new Map(); // İstek 3 (İlçe Zoom) için
+        let ilceBboxMap = new Map();
 
         // Initialize map
         const map = new maplibregl.Map({
@@ -295,24 +322,18 @@
                 data.features.forEach(feature => {
                     const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
                     feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
-                    
                     const il = feature.properties['İl_Adı'];
                     const ilce = feature.properties['İlçe_Adı'];
                     const coords = feature.geometry.coordinates;
-                    
                     if (il) {
                         const ilUpper = il.trim().toLocaleUpperCase('tr');
                         const ilceUpper = ilce ? ilce.trim().toLocaleUpperCase('tr') : null;
-                        
                         feature.properties.IL_UPPER = ilUpper;
                         feature.properties.ILCE_UPPER = ilceUpper;
-
                         iller.add(ilUpper); 
                         if (ilceUpper) {
                             if (!ilceMap.has(ilUpper)) { ilceMap.set(ilUpper, new Set()); }
                             ilceMap.get(ilUpper).add(ilceUpper);
-                            
-                            // İSTEK 3: İLÇE BBOX HESAPLAMA
                             const ilceKey = `${ilUpper}_${ilceUpper}`;
                             if (!ilceBboxMap.has(ilceKey)) {
                                 ilceBboxMap.set(ilceKey, [coords[0], coords[1], coords[0], coords[1]]);
@@ -333,7 +354,6 @@
                         }
                     }
                 });
-                
                 const sortedIller = [...iller].sort((a, b) => a.localeCompare(b, 'tr'));
                 sortedIller.forEach(il => {
                     const option = document.createElement('option');
@@ -344,14 +364,12 @@
                 filteredPoints = data.features;
                 console.log(`Loaded ${allPoints.length} points.`);
                 
-                // İSTEK 6: Başlangıçta tüm grupları yükle
-                updateGrupFilter();
+                updateGrupFilter(); // Başlangıçta tüm grupları yükle
 
                 map.on('load', () => {
                     
-                    // İSTEK 2: HARİTA ÇERÇEVESİ (PADDING)
-                    // Sol panel (240px) + boşluk (20px) + ekstra (20px) = 280px
-                    map.setPadding({ left: 280 });
+                    // === DÜZELTME: PADDING KALDIRILDI ===
+                    // map.setPadding({ left: 280 }); // Bu satır kaldırıldı.
                     
                     map.addSource('tasinmazlar', { type: 'geojson', data: data });
 
@@ -372,7 +390,7 @@
                         }
                     });
 
-                    // Parsel Yükleme
+                    // Parsel Yükleme ('parseller_simple.geojson' aranıyor)
                     fetch('parseller_simple.geojson') 
                         .then(response => {
                             if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
@@ -478,14 +496,13 @@
             } else if (mousePosition) { updateSpider(mousePosition); }
         });
 
-        // === GELİŞTİRME 6: İLİŞKİSEL GRUP FİLTRESİ FONKSİYONU ===
+        // İLİŞKİSEL GRUP FİLTRESİ
         function updateGrupFilter() {
             const selectedIl = document.getElementById('ilFilter').value;
             const selectedIlce = document.getElementById('ilceFilter').value;
             const filterGroupSelect = document.getElementById('filterGroupSelect');
             const currentSelectedGrup = filterGroupSelect.value;
             
-            // 1. İl/İlçe'ye göre noktaları filtrele
             const tempFilteredPoints = allPoints.filter(feature => {
                 const props = feature.properties;
                 let ilMatch = (selectedIl === 'TÜMÜ') || (props.IL_UPPER === selectedIl);
@@ -493,16 +510,13 @@
                 return ilMatch && ilceMatch;
             });
             
-            // 2. Bu filtrelenmiş noktalardaki benzersiz grupları bul
             const uniqueGruplar = new Set();
             tempFilteredPoints.forEach(feature => {
                 uniqueGruplar.add(feature.properties.FiltreGrubu);
             });
             
-            // 3. Gruba göre sırala
             const sortedGruplar = [...uniqueGruplar].sort((a, b) => a.localeCompare(b, 'tr'));
             
-            // 4. Listeyi yeniden doldur
             filterGroupSelect.innerHTML = '<option value="TÜMÜ">TÜMÜ GÖSTER</option>'; // Temizle
             sortedGruplar.forEach(grup => {
                 const option = document.createElement('option');
@@ -511,7 +525,6 @@
                 filterGroupSelect.appendChild(option);
             });
             
-            // 5. Eski seçim hala geçerliyse, onu koru. Değilse, "TÜMÜ"ne dön.
             if (uniqueGruplar.has(currentSelectedGrup)) {
                 filterGroupSelect.value = currentSelectedGrup;
             } else {
@@ -519,7 +532,7 @@
             }
         }
         
-        // Ana Filtreleme Fonksiyonu (Değişiklik yok)
+        // Ana Filtreleme Fonksiyonu
         function applyAllFilters() {
             const grup = document.getElementById('filterGroupSelect').value;
             const il = document.getElementById('ilFilter').value;
@@ -550,7 +563,7 @@
             }
         }
         
-        // İlçe Listesi Güncelleme (Değişiklik yok)
+        // İlçe Listesi Güncelleme
         function updateIlceFilter() {
             const selectedIl = document.getElementById('ilFilter').value;
             const ilceSelect = document.getElementById('ilceFilter');
@@ -571,14 +584,14 @@
             }
         }
         
-        // 'Temizle' fonksiyonu (GÜNCELLENDİ: Grup filtresini de sıfırlar)
+        // 'Temizle' fonksiyonu (İSTEK 1)
         function clearAll() {
             document.getElementById('tapuInput').value = '';
             document.getElementById('adaInput').value = '';
             document.getElementById('parselInput').value = '';
             document.getElementById('ilFilter').value = 'TÜMÜ';
             updateIlceFilter(); // İlçe listesini sıfırla
-            updateGrupFilter(); // Grup listesini sıfırla (tümünü göster)
+            updateGrupFilter(); // Grup listesini sıfırla
             document.getElementById('filterGroupSelect').value = 'TÜMÜ';
             applyAllFilters(); 
             if (currentPopup) {
@@ -677,7 +690,6 @@
                 // Bu bir PARSEL pop-up'ı
                 html += `<div class="popup-title">Parsel Bilgisi</div>`;
                 if (props.İl_Adı) html += `<strong>İl/İlçe:</strong> ${props.İl_Adı} / ${props.İlçe_Adı}<br>`;
-                // ÖNEMLİ: Parsel dosyanızda bu sütunlar varsa görünür
                 if (props.Ada) html += `<strong>Ada/Parsel:</strong> ${props.Ada} / ${props.Parsel}<br>`;
                 if (props.Mahalle) html += `<strong>Mahalle:</strong> ${props.Mahalle}<br>`;
                 
