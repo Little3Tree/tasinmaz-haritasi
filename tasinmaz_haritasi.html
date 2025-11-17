@@ -18,34 +18,84 @@
         .stats-row { display: flex; justify-content: space-between; margin: 5px 0; gap: 20px; }
         .stats-label { color: #666; font-weight: 500; }
         .stats-value { color: #e74c3c; font-weight: bold; font-size: 16px; }
+        .legend { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; font-size: 13px; max-width: 280px; }
+        .legend h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
         
-        /* === DÜZELTME 1: LEJANT CSS GÜNCELLENDİ === */
-        /* Ortak Kutu Stili */
-        .legend-box {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1;
-            font-size: 13px;
-            max-width: 280px;
+        /* === DÜZELTME 1: LEJANT AYIRICI === */
+        /* İkinci 'h3' başlığına (Bağlantı Mesafesi) bir üst boşluk ve çizgi ekle */
+        .legend h3:nth-of-type(2) {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
         }
-        /* İKİNCİ Lejantı birincinin altına it */
-        .legend-box:nth-child(2) {
-            top: 255px; /* Tahmini değer, gerekirse ayarlayın */
-        }
-        
-        .legend-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
+        /* === DÜZELTME 1 BİTTİ === */
+
         .legend-item { display: flex; align-items: center; margin: 8px 0; }
         .legend-color-circle { width: 15px; height: 15px; margin-right: 10px; border-radius: 50%; border: 1px solid #777; }
         .legend-color-line { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
         .legend-label { color: #666; }
-        /* === DÜZELTME 1 BİTTİ === */
 
-        .controls { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; max-width: 240px; max-height: 80vh; overflow-y: auto; }
+        /* === GELİŞTİRME 9: AÇILIR PANEL STİLLERİ === */
+        .controls { 
+            position: absolute; 
+            bottom: 20px; 
+            right: 20px; 
+            z-index: 2; /* Lejantın üstünde kalsın */
+            max-width: 240px; 
+            width: 100%;
+        }
+        
+        /* Tıklanabilir Başlık */
+        .controls-toggle {
+            padding: 10px 15px;
+            background: #e74c3c;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px; /* Başlangıçta tüm kenarlar yuvarlak */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-radius 0.3s ease-in-out;
+        }
+        .controls-toggle span { /* Ok ikonu */
+            transition: transform 0.3s;
+            transform-origin: center;
+        }
+        
+        /* Açıkken: Başlığın alt kenarları düz */
+        .controls-toggle:not(.collapsed-header) {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        
+        /* Kapalıyken: Ok ikonu dönsün */
+        .controls-toggle.collapsed-header span {
+            transform: rotate(-90deg);
+        }
+
+        /* Açılır/Kapanır İçerik Alanı */
+        .controls-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            max-height: 70vh; /* Yüksekliği sınırla, gerekirse kaydırma çubuğu çıksın */
+            overflow-y: auto;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out, box-shadow 0.3s ease-out;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        /* Kapalı durum */
+        .controls-content.collapsed {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            overflow: hidden;
+            box-shadow: none;
+        }
+        /* === GELİŞTİRME 9 BİTTİ === */
+
         .control-group { margin: 10px 0; }
         .control-label { font-size: 12px; color: #666; margin-bottom: 5px; display: block; }
         input[type="range"] { width: 100%; }
@@ -94,76 +144,82 @@
             <span class="stats-value" id="nearestDistance">-</span>
         </div>
     </div>
-
-    <div class="legend-box"> <h3>Taşınmaz Grubu</h3>
+    
+    <div class="legend">
+        <h3>Taşınmaz Grubu</h3>
         <div class="legend-item"><div class="legend-color-circle" style="background: #E74C3C;"></div><span class="legend-label">KONUT</span></div>
         <div class="legend-item"><div class="legend-color-circle" style="background: #2ECC71;"></div><span class="legend-label">ARSA</span></div>
         <div class="legend-item"><div class="legend-color-circle" style="background: #F39C12;"></div><span class="legend-label">TARLA</span></div>
         <div class="legend-item"><div class="legend-color-circle" style="background: #3498DB;"></div><span class="legend-label">İŞYERİ</span></div>
         <div class="legend-item"><div class="legend-color-circle" style="background: #9B59B6;"></div><span class="legend-label">DİĞER</span></div>
-    </div>
-    <div class="legend-box"> <h3 style="margin-top: 15px;">Bağlantı Mesafesi</h3>
+        
+        <h3 style="margin-top: 15px;">Bağlantı Mesafesi</h3>
         <div class="legend-item"><div class="legend-color-line" style="background: #27ae60; opacity: 0.9;"></div><span class="legend-label">0-500m</span></div>
         <div class="legend-item"><div class="legend-color-line" style="background: #f39c12; opacity: 0.8;"></div><span class="legend-label">500m-1km</span></div>
         <div class="legend-item"><div class="legend-color-line" style="background: #e67e22; opacity: 0.7;"></div><span class="legend-label">1-2km</span></div>
         <div class="legend-item"><div class="legend-color-line" style="background: #e74c3c; opacity: 0.5;"></div><span class="legend-label">2-3km</span></div>
         <div class="legend-item"><div class="legend-color-line" style="background: #c0392b; opacity: 0.3;"></div><span class="legend-label">3km+</span></div>
     </div>
-    <div class="controls">
-        <div class="control-group">
-            <label class="control-label">Tapu Sicil ile Ara</label>
-            <div class="search-container">
-                <input type="text" id="tapuInput" placeholder="Tapu Sicil No...">
-                <button id="tapuSearchButton">Ara</button>
-            </div>
-        </div>
-        <div class="control-group">
-            <label class="control-label">Ada / Parsel ile Ara</label>
-            <div class="ada-parsel-container">
-                <input type="text" id="adaInput" placeholder="Ada No...">
-                <input type="text" id="parselInput" placeholder="Parsel No...">
-            </div>
-            <button id="adaParselSearchButton" style="margin-top: 5px;">Ara</button>
-        </div>
-        <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
-            <label class="control-label">Taşınmaz Grubu Filtresi</label>
-            <select id="filterGroupSelect">
-                <option value="TÜMÜ">TÜMÜ GÖSTER</option>
-                <option value="ARSA">ARSA</option>
-                <option value="TARLA">TARLA</option>
-                <option value="KONUT">KONUT</option>
-                <option value="İŞYERİ">İŞYERİ</option>
-                <option value="DİĞER">DİĞER</option>
-            </select>
-        </div>
-        <div class="control-group">
-            <label class="control-label">İl Filtresi</label>
-            <select id="ilFilter">
-                <option value="TÜMÜ">TÜM İLLER</option>
-            </select>
-        </div>
-        <div class="control-group">
-            <label class="control-label">İlçe Filtresi</label>
-            <select id="ilceFilter" disabled>
-                <option value="TÜMÜ">TÜM İLÇELER</option>
-            </select>
-        </div>
-        <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
-             <button id="clearFiltersButton">Arama/Filtreleri Temizle</button>
-        </div>
-        <div class="control-group">
-            <label class="control-label">Maksimum Mesafe</label>
-            <input type="range" id="maxDistance" min="500" max="5000" step="100" value="3000">
-            <span class="control-value" id="maxDistanceValue">3000m</span>
-        </div>
-        <div class="control-group">
-            <label class="control-label">Maksimum Taşınmaz</label>
-            <input type="range" id="maxConnections" min="10" max="200" step="10" value="50">
-            <span class="control-value" id="maxConnectionsValue">50</span>
-        </div>
-        <button id="toggleAnimation">Animasyonu Durdur</button>
-    </div>
 
+    <div class="controls">
+        <div class="controls-toggle" id="controlsToggle">
+            Filtreler ve Arama
+            <span>▼</span> </div>
+
+        <div class="controls-content" id="controlsContent"> <div class="control-group">
+                <label class="control-label">Tapu Sicil ile Ara</label>
+                <div class="search-container">
+                    <input type="text" id="tapuInput" placeholder="Tapu Sicil No...">
+                    <button id="tapuSearchButton">Ara</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Ada / Parsel ile Ara</label>
+                <div class="ada-parsel-container">
+                    <input type="text" id="adaInput" placeholder="Ada No...">
+                    <input type="text" id="parselInput" placeholder="Parsel No...">
+                </div>
+                <button id="adaParselSearchButton" style="margin-top: 5px;">Ara</button>
+            </div>
+            <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
+                <label class="control-label">Taşınmaz Grubu Filtresi</label>
+                <select id="filterGroupSelect">
+                    <option value="TÜMÜ">TÜMÜ GÖSTER</option>
+                    <option value="ARSA">ARSA</option>
+                    <option value="TARLA">TARLA</option>
+                    <option value="KONUT">KONUT</option>
+                    <option value="İŞYERİ">İŞYERİ</option>
+                    <option value="DİĞER">DİĞER</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label class="control-label">İl Filtresi</label>
+                <select id="ilFilter">
+                    <option value="TÜMÜ">TÜM İLLER</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label class="control-label">İlçe Filtresi</label>
+                <select id="ilceFilter" disabled>
+                    <option value="TÜMÜ">TÜM İLÇELER</option>
+                </select>
+            </div>
+            <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
+                <button id="clearFiltersButton">Arama/Filtreleri Temizle</button>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Maksimum Mesafe</label>
+                <input type="range" id="maxDistance" min="500" max="5000" step="100" value="3000">
+                <span class="control-value" id="maxDistanceValue">3000m</span>
+            </div>
+            <div class="control-group">
+                <label class="control-label">Maksimum Taşınmaz</label>
+                <input type="range" id="maxConnections" min="10" max="200" step="10" value="50">
+                <span class="control-value" id="maxConnectionsValue">50</span>
+            </div>
+            <button id="toggleAnimation">Animasyonu Durdur</button>
+        </div>
+    </div>
     <script>
         // Sınıflandırma Fonksiyonu (Değişiklik yok)
         function getFiltreGrubu(nitelik) {
@@ -270,9 +326,8 @@
                         }
                     });
 
-                    // === DÜZELTME 2: PARSEL YÜKLEME GÜNCELLENDİ ===
-                    // Artık 'parseller_simple.geojson' dosyasını arayacak
-                    fetch('parseller_simple.geojson')
+                    // Parsel Yükleme (GÜNCELLENDİ)
+                    fetch('parseller_simple.geojson') // 'parseller.geojson' DEĞİL!
                         .then(response => response.json())
                         .then(parselData => {
                             console.log(`Loaded ${parselData.features.length} simplified parcels.`);
@@ -298,7 +353,7 @@
                                 id: 'parseller-layer',
                                 type: 'fill',
                                 source: 'parseller-source',
-                                minzoom: 13, // Sadece yakınlaşınca göster
+                                minzoom: 13, // Zoom 13+ olunca göster
                                 paint: {
                                     'fill-color': '#95A5A6', 
                                     'fill-opacity': 0.3,
@@ -309,7 +364,6 @@
                         }).catch(err => {
                             console.warn('Parsel verisi yüklenemedi (parseller_simple.geojson bulunamadı mı?):', err);
                         });
-                    // === DÜZELTME 2 BİTTİ ===
 
                     map.addSource('spider-lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
                     map.addLayer({ id: 'spider-lines-layer', type: 'line', source: 'spider-lines', paint: { 'line-width': ['get', 'width'], 'line-color': ['get', 'color'], 'line-opacity': ['get', 'opacity'] } });
@@ -383,7 +437,7 @@
             } else if (mousePosition) { updateSpider(mousePosition); }
         });
 
-        // === GELİŞTİRME 8: FİLTRELEME GÜNCELLENDİ (Büyük/Küçük Harf) ===
+        // Akıllı Filtreleme (Büyük/Küçük Harf)
         function applyAllFilters() {
             const grup = document.getElementById('filterGroupSelect').value;
             const il = document.getElementById('ilFilter').value;
@@ -503,7 +557,7 @@
         }
         map.on('click', 'tasinmazlar-layer', (e) => { showPopup(e.features[0]); });
         
-        // === GELİŞTİRME 8: ARAMA GÜNCELLENDİ (Büyük/Küçük Harf) ===
+        // Arama (Büyük/Küçük Harf)
         function findAndFly(result) {
             if (result) {
                 clearAll(); 
@@ -513,23 +567,19 @@
                 alert('Taşınmaz bulunamadı.\nLütfen tam ve doğru bir değer girin.');
             }
         }
-
         document.getElementById('tapuSearchButton').addEventListener('click', () => {
             const searchTerm = document.getElementById('tapuInput').value.trim().toLocaleUpperCase('tr');
             if (!searchTerm) return;
             const result = allPoints.find(feature => {
-                 // Verinin 'Tapu_Sicil' özelliğini de BÜYÜK harfe çevir
                  return String(feature.properties.Tapu_Sicil).trim().toLocaleUpperCase('tr') === searchTerm;
             });
             findAndFly(result);
         });
-
         document.getElementById('adaParselSearchButton').addEventListener('click', () => {
             const adaTerm = document.getElementById('adaInput').value.trim().toLocaleUpperCase('tr');
             const parselTerm = document.getElementById('parselInput').value.trim().toLocaleUpperCase('tr');
             if (!adaTerm || !parselTerm) { alert('Lütfen hem Ada hem de Parsel numarasını girin.'); return; }
             const result = allPoints.find(feature => {
-                // Verinin 'Ada' ve 'Parsel' özelliklerini de BÜYÜK harfe çevir
                 const propAda = String(feature.properties.Ada).trim().toLocaleUpperCase('tr');
                 const propParsel = String(feature.properties.Parsel).trim().toLocaleUpperCase('tr');
                 return propAda === adaTerm && propParsel === parselTerm;
@@ -540,6 +590,16 @@
         // Cursor (Fare İmla) (Değişiklik yok)
         map.on('mouseenter', 'tasinmazlar-layer', () => { map.getCanvas().style.cursor = 'pointer'; });
         map.on('mouseleave', 'tasinmazlar-layer', () => { map.getCanvas().style.cursor = ''; });
+        
+        // === GELİŞTİRME 9: AÇILIR PANEL JAVASCRIPT ===
+        document.getElementById('controlsToggle').addEventListener('click', () => {
+            const content = document.getElementById('controlsContent');
+            const toggle = document.getElementById('controlsToggle');
+            
+            content.classList.toggle('collapsed');
+            toggle.classList.toggle('collapsed-header');
+        });
+        
     </script>
 </body>
 </html>
