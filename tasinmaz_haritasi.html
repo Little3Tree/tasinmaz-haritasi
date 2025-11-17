@@ -21,7 +21,7 @@
         .legend { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; font-size: 13px; max-width: 280px; }
         .legend h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
         .legend-item { display: flex; align-items: center; margin: 8px 0; }
-        .legend-color { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
+        .legend-color { width: 15px; height: 15px; margin-right: 10px; border-radius: 50%; border: 1px solid #777; } /* === GÜNCEL STİL (Daire) === */
         .legend-label { color: #666; }
         .controls { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; max-width: 240px; max-height: 80vh; overflow-y: auto; }
         .control-group { margin: 10px 0; }
@@ -50,8 +50,10 @@
 <body>
     <div id="map"></div>
     
+    <div class="header"> ... (içerik aynı) ... </div>
+    <div class="stats"> ... (içerik aynı) ... </div>
     <div class="header">
-        <div class="day">AŞAMA 4.1</div>
+        <div class="day">AŞAMA 5</div>
         <h1>Taşınmaz Ağı Haritası</h1>
         <p>Kurumun <strong>~7,000</strong> taşınmaz noktası arasındaki bağlantı ağı.</p>
         <p style="font-size: 12px; color: #888; margin-top: 10px;">
@@ -72,15 +74,24 @@
             <span class="stats-value" id="nearestDistance">-</span>
         </div>
     </div>
+
     <div class="legend">
-        <h3>Bağlantı Mesafesi</h3>
-        <div class="legend-item"><div class="legend-color" style="background: #27ae60; opacity: 0.9;"></div><span class="legend-label">0-500m</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #f39c12; opacity: 0.8;"></div><span class="legend-label">500m-1km</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #e67e22; opacity: 0.7;"></div><span class="legend-label">1-2km</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #e74c3c; opacity: 0.5;"></div><span class="legend-label">2-3km</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #c0392b; opacity: 0.3;"></div><span class="legend-label">3km+</span></div>
+        <h3>Taşınmaz Grubu</h3>
+        <div class="legend-item"><div class="legend-color" style="background: #E74C3C;"></div><span class="legend-label">KONUT</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #2ECC71;"></div><span class="legend-label">ARSA</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #F39C12;"></div><span class="legend-label">TARLA</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #3498DB;"></div><span class="legend-label">İŞYERİ</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #9B59B6;"></div><span class="legend-label">DİĞER</span></div>
+        
+        <h3 style="margin-top: 15px;">Bağlantı Mesafesi</h3>
+        <div class="legend-item"><div class="legend-color" style="background: #27ae60; opacity: 0.9; height: 3px; border: none;"></div><span class="legend-label">0-500m</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #f39c12; opacity: 0.8; height: 3px; border: none;"></div><span class="legend-label">500m-1km</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #e67e22; opacity: 0.7; height: 3px; border: none;"></div><span class="legend-label">1-2km</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #e74c3c; opacity: 0.5; height: 3px; border: none;"></div><span class="legend-label">2-3km</span></div>
+        <div class="legend-item"><div class="legend-color" style="background: #c0392b; opacity: 0.3; height: 3px; border: none;"></div><span class="legend-label">3km+</span></div>
     </div>
 
+    <div class="controls"> ... (içerik aynı) ... </div>
     <div class="controls">
         <div class="control-group">
             <label class="control-label">Tapu Sicil ile Ara</label>
@@ -100,7 +111,7 @@
         <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
             <label class="control-label">Taşınmaz Grubu Filtresi</label>
             <select id="filterGroupSelect">
-                <option value="TÜMÜ">TÜMÜNÜ GÖSTER</option>
+                <option value="TÜMÜ">TÜMÜ GÖSTER</option>
                 <option value="ARSA">ARSA</option>
                 <option value="TARLA">TARLA</option>
                 <option value="KONUT">KONUT</option>
@@ -149,12 +160,11 @@
             return 'DİĞER';
         }
         
-        // === GELİŞTİRME 4.1: YENİ GLOBAL DEĞİŞKENLER ===
+        // Global Değişkenler (Değişiklik yok)
         const TURKIYE_VIEW = { center: [35.0000, 39.0000], zoom: 6 };
-        let currentPopup = null; // Açık olan pop-up'ı takip etmek için
-        let ilceMap = new Map(); // İl -> İlçe[] haritası
-        let ilBboxMap = new Map(); // İl -> BoundingBox[] haritası
-        // === BİTTİ ===
+        let currentPopup = null; 
+        let ilceMap = new Map(); 
+        let ilBboxMap = new Map(); 
 
         // Initialize map
         const map = new maplibregl.Map({
@@ -164,8 +174,8 @@
                 sources: { 'carto-light': { type: 'raster', tiles: ['https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'], tileSize: 256, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' } },
                 layers: [{ id: 'carto-light-layer', type: 'raster', source: 'carto-light', minzoom: 0, maxzoom: 22 }]
             },
-            center: TURKIYE_VIEW.center, // Değişken kullan
-            zoom: TURKIYE_VIEW.zoom, // Değişken kullan
+            center: TURKIYE_VIEW.center, 
+            zoom: TURKIYE_VIEW.zoom,
             pitch: 0
         });
 
@@ -176,68 +186,103 @@
         let maxDistance = 3000;
         let maxConnections = 50;
 
-        // Load points (taşınmaz) data
+        // Veri Yükleme (BBOX hesaplama vb. değişiklik yok)
         fetch('kurum_tasinmazlari.geojson')
             .then(response => response.json())
             .then(data => {
-                
                 const ilSelect = document.getElementById('ilFilter');
                 const iller = new Set(); 
-
                 data.features.forEach(feature => {
-                    // 1. Sınıflandırma
                     const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
                     feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
-                    
-                    // 2. İl/İlçe Haritası
                     const il = feature.properties['İl_Adı'];
                     const ilce = feature.properties['İlçe_Adı'];
                     const coords = feature.geometry.coordinates;
-                    
                     if (il) {
                         iller.add(il.trim()); 
                         if (ilce) {
                             if (!ilceMap.has(il)) { ilceMap.set(il, new Set()); }
                             ilceMap.get(il).add(ilce.trim());
                         }
-                        
-                        // === GELİŞTİRME 4.1: İL BBOX HESAPLAMA ===
-                        // Her ilin sınırlarını (extent) veri yüklenirken hesapla
                         if (!ilBboxMap.has(il)) {
-                            // O il için ilk nokta: [minLon, minLat, maxLon, maxLat]
                             ilBboxMap.set(il, [coords[0], coords[1], coords[0], coords[1]]);
                         } else {
-                            // Mevcut BBOX'ı güncelle
                             const bbox = ilBboxMap.get(il);
-                            bbox[0] = Math.min(bbox[0], coords[0]); // minLon
-                            bbox[1] = Math.min(bbox[1], coords[1]); // minLat
-                            bbox[2] = Math.max(bbox[2], coords[0]); // maxLon
-                            bbox[3] = Math.max(bbox[3], coords[1]); // maxLat
+                            bbox[0] = Math.min(bbox[0], coords[0]); bbox[1] = Math.min(bbox[1], coords[1]);
+                            bbox[2] = Math.max(bbox[2], coords[0]); bbox[3] = Math.max(bbox[3], coords[1]);
                             ilBboxMap.set(il, bbox);
                         }
-                        // === BİTTİ ===
                     }
                 });
-                
-                // İl Filtresini Doldur
                 const sortedIller = [...iller].sort((a, b) => a.localeCompare(b, 'tr'));
                 sortedIller.forEach(il => {
                     const option = document.createElement('option');
-                    option.value = il;
-                    option.textContent = il;
+                    option.value = il; option.textContent = il;
                     ilSelect.appendChild(option);
                 });
-
                 allPoints = data.features;
                 filteredPoints = data.features;
                 console.log(`Loaded ${allPoints.length} points.`);
                 
                 map.on('load', () => {
                     map.addSource('tasinmazlar', { type: 'geojson', data: data });
+
+                    // === GELİŞTİRME 5: RENKLENDİRME GÜNCELLENDİ ===
+                    // Nokta katmanı (Taşınmazlar)
                     map.addLayer({
-                        id: 'tasinmazlar-layer', type: 'circle', source: 'tasinmazlar',
-                        paint: { 'circle-radius': 3, 'circle-color': '#3498db', 'circle-opacity': 0.6, 'circle-stroke-width': 1, 'circle-stroke-color': '#2980b9', 'circle-stroke-opacity': 0.8 }
+                        id: 'tasinmazlar-layer', 
+                        type: 'circle', 
+                        source: 'tasinmazlar',
+                        paint: {
+                            // 'circle-color' artık statik bir renk değil,
+                            // 'FiltreGrubu' özelliğine göre dinamik bir renktir.
+                            'circle-color': [
+                                'match',
+                                ['get', 'FiltreGrubu'],
+                                'KONUT', '#E74C3C',   // Kırmızı
+                                'ARSA', '#2ECC71',    // Yeşil
+                                'TARLA', '#F39C12',   // Turuncu
+                                'İŞYERİ', '#3498DB',  // Mavi
+                                'DİĞER', '#9B59B6',   // Mor
+                                '#95A5A6' // Eşleşmeyenler (varsayılan)
+                            ],
+                            'circle-radius': 4, // Noktaları biraz büyüttüm
+                            'circle-opacity': 0.8,
+                            'circle-stroke-width': 1,
+                            'circle-stroke-color': '#ffffff'
+                        }
                     });
+
+                    // === GELİŞTİRME 6: PARSEL KATMANI EKLENDİ ===
+                    // (Bu kodun çalışması için 'parseller.geojson' dosyasının
+                    // 'tasinmaz_haritasi.html' ile aynı klasörde olması gerekir)
+                    fetch('parseller.geojson')
+                        .then(response => response.json())
+                        .then(parselData => {
+                            console.log(`Loaded ${parselData.features.length} parcels.`);
+                            map.addSource('parseller-source', {
+                                type: 'geojson',
+                                data: parselData
+                            });
+                            
+                            // Parsel katmanını, 'tasinmazlar-layer'ın ALTINA ekle
+                            // Böylece noktalar parsellerin üstünde görünür
+                            map.addLayer({
+                                id: 'parseller-layer',
+                                type: 'fill',
+                                source: 'parseller-source',
+                                paint: {
+                                    'fill-color': '#95A5A6', // Gri (veya başka bir renk)
+                                    'fill-opacity': 0.3,
+                                    'fill-outline-color': '#000000'
+                                }
+                            }, 'tasinmazlar-layer'); // Bu 'beforeId' önemlidir!
+                        
+                        }).catch(err => {
+                            console.warn('Parsel verisi yüklenemedi (parseller.geojson bulunamadı mı?):', err);
+                        });
+                    // === GELİŞTİRME 6 BİTTİ ===
+
                     map.addSource('spider-lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
                     map.addLayer({ id: 'spider-lines-layer', type: 'line', source: 'spider-lines', paint: { 'line-width': ['get', 'width'], 'line-color': ['get', 'color'], 'line-opacity': ['get', 'opacity'] } });
                     map.addSource('mouse-point', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
@@ -310,21 +355,12 @@
             } else if (mousePosition) { updateSpider(mousePosition); }
         });
 
-        // === GELİŞTİRME 4.1: GÜNCELLENMİŞ FONKSİYONLAR ===
-        
-        // YENİ: Haritayı Türkiye ölçeğine döndür
-        function resetView() {
-            map.flyTo(TURKIYE_VIEW);
-        }
-
-        // Ana Filtreleme Fonksiyonu (Değişiklik yok)
+        // Filtreleme Fonksiyonları (Değişiklik yok)
         function applyAllFilters() {
             const grup = document.getElementById('filterGroupSelect').value;
             const il = document.getElementById('ilFilter').value;
             const ilce = document.getElementById('ilceFilter').value;
-            
             let mapFilter = ['all']; 
-            
             filteredPoints = allPoints.filter(feature => {
                 const props = feature.properties;
                 let grupMatch = (grup === 'TÜMÜ') || (props.FiltreGrubu === grup);
@@ -332,24 +368,27 @@
                 let ilceMatch = (ilce === 'TÜMÜ') || (props['İlçe_Adı'] === ilce);
                 return grupMatch && ilMatch && ilceMatch;
             });
-            
             if (grup !== 'TÜMÜ') { mapFilter.push(['==', ['get', 'FiltreGrubu'], grup]); }
             if (il !== 'TÜMÜ') { mapFilter.push(['==', ['get', 'İl_Adı'], il]); }
             if (ilce !== 'TÜMÜ') { mapFilter.push(['==', ['get', 'İlçe_Adı'], ilce]); }
-            
             map.setFilter('tasinmazlar-layer', mapFilter.length > 1 ? mapFilter : null);
+            
+            // === GELİŞTİRME 6: PARSEL FİLTRESİ ===
+            // Noktalar filtrelendiğinde, parselleri de filtrele
+            // (Bu kod, 'parseller-layer' katmanının yüklendiğini varsayar)
+            if (map.getLayer('parseller-layer')) {
+                map.setFilter('parseller-layer', mapFilter.length > 1 ? mapFilter : null);
+            }
+            // === BİTTİ ===
 
             if (mousePosition && animationEnabled) {
                 updateSpider(mousePosition);
             }
         }
-        
-        // İlçe Listesini Güncelleme Fonksiyonu (Değişiklik yok)
         function updateIlceFilter() {
             const selectedIl = document.getElementById('ilFilter').value;
             const ilceSelect = document.getElementById('ilceFilter');
             ilceSelect.innerHTML = '<option value="TÜMÜ">TÜM İLÇELER</option>'; 
-            
             if (selectedIl === 'TÜMÜ') {
                 ilceSelect.disabled = true; 
             } else {
@@ -359,73 +398,55 @@
                     const sortedIlceler = [...ilceler].sort((a, b) => a.localeCompare(b, 'tr'));
                     sortedIlceler.forEach(ilce => {
                         const option = document.createElement('option');
-                        option.value = ilce;
-                        option.textContent = ilce;
+                        option.value = ilce; option.textContent = ilce;
                         ilceSelect.appendChild(option);
                     });
                 }
             }
         }
-        
-        // YENİ: Tüm Filtreleri Temizleme Fonksiyonu (GÜNCELLENDİ)
         function clearAll() {
-            // Arama kutularını temizle
             document.getElementById('tapuInput').value = '';
             document.getElementById('adaInput').value = '';
             document.getElementById('parselInput').value = '';
-            
-            // Filtre listelerini sıfırla
             document.getElementById('filterGroupSelect').value = 'TÜMÜ';
             document.getElementById('ilFilter').value = 'TÜMÜ';
-            
-            updateIlceFilter(); // İlçe filtresini sıfırla ve pasif yap
-            applyAllFilters(); // Filtreleri uygula (tüm haritayı göster)
-            
-            // --- İSTEK 1: POPUP KAPAT VE ZOOM SIFIRLA ---
+            updateIlceFilter(); 
+            applyAllFilters(); 
             if (currentPopup) {
                 currentPopup.remove();
                 currentPopup = null;
             }
-            resetView(); // Türkiye ölçeğine geri dön
+            resetView(); 
         }
 
-        // === FİLTRE DİNLEYİCİLERİ GÜNCELLENDİ (İSTEK 2) ===
+        // Filtre Dinleyicileri (Değişiklik yok)
         document.getElementById('filterGroupSelect').addEventListener('change', applyAllFilters);
-        
         document.getElementById('ilFilter').addEventListener('change', () => {
-            updateIlceFilter(); // Önce ilçeleri güncelle
-            applyAllFilters();  // Sonra tüm haritayı filtrele
-            
-            // --- İSTEK 2: İL SINIRINA ZOOM YAP ---
+            updateIlceFilter(); 
+            applyAllFilters();  
             const selectedIl = document.getElementById('ilFilter').value;
             if (selectedIl === 'TÜMÜ') {
-                resetView(); // "TÜM İLLER" seçilirse Türkiye'ye dön
+                resetView(); 
             } else {
                 const bbox = ilBboxMap.get(selectedIl);
                 if (bbox) {
-                    // Eğer ilde sadece 1 nokta varsa (min/max aynıysa), flyTo yap
                     if (bbox[0] === bbox[2] && bbox[1] === bbox[3]) {
                         map.flyTo({ center: [bbox[0], bbox[1]], zoom: 15 });
                     } else {
-                        // Birden fazla nokta varsa, sınırlara odaklan
-                        // BBOX formatı: [[minLon, minLat], [maxLon, maxLat]]
                         map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-                            padding: 50 // Kenarlardan 50px boşluk bırak
+                            padding: 50 
                         });
                     }
                 }
             }
-            // --- İSTEK 2 BİTTİ ---
         });
-        
         document.getElementById('ilceFilter').addEventListener('change', applyAllFilters);
         document.getElementById('clearFiltersButton').addEventListener('click', clearAll);
 
 
-        // Pop-up Fonksiyonu (GÜNCELLENDİ: currentPopup'ı takip ediyor)
+        // Pop-up Fonksiyonu ve Tıklama (Değişiklik yok)
         function showPopup(feature) {
             const coords = feature.geometry.coordinates.slice(); const props = feature.properties; 
-            
             let html = `<div class="popup-container">`;
             html += `<div class="popup-title">Taşınmaz Bilgisi</div>`;
             if (props.Tapu_Sicil) html += `<strong>Tapu Sicil:</strong> ${props.Tapu_Sicil}<br>`;
@@ -438,45 +459,26 @@
             if (props.Yüz_Ölçüm) html += `<strong>Yüz Ölçüm:</strong> ${props.Yüz_Ölçüm} m²<br>`;
             html += `<hr><strong>Konum:</strong><br>${coords[1].toFixed(6)}, ${coords[0].toFixed(6)}`;
             html += `</div>`;
-
-            // Açık olan varsa kapat (İSTEK 1)
             if (currentPopup) {
                 currentPopup.remove();
             }
-            
-            // Yenisini oluştur ve global değişkene ata
             currentPopup = new maplibregl.Popup({ closeOnClick: true, maxWidth: '240px' })
                 .setLngLat(coords)
                 .setHTML(html)
                 .addTo(map);
         }
-        
-        // Tıklama ile Pop-up (Değişiklik yok)
         map.on('click', 'tasinmazlar-layer', (e) => { showPopup(e.features[0]); });
         
-        // Arama Fonksiyonları (GÜNCELLENDİ: 'clearAll' yerine sadece filtreleri temizliyor)
+        // Arama Fonksiyonları (Değişiklik yok)
         function findAndFly(result) {
             if (result) {
-                // ARAMA BAŞARILI: Filtreleri temizle (ama zoom'u değil)
-                document.getElementById('filterGroupSelect').value = 'TÜMÜ';
-                document.getElementById('ilFilter').value = 'TÜMÜ';
-                updateIlceFilter();
-                applyAllFilters();
-                
-                // Arama kutularını da temizle (İSTEK 1'e yardımcı)
-                document.getElementById('tapuInput').value = '';
-                document.getElementById('adaInput').value = '';
-                document.getElementById('parselInput').value = '';
-
-                // Sonra uç ve pop-up aç
+                clearAll(); 
                 map.flyTo({ center: result.geometry.coordinates, zoom: 17, speed: 1.5 });
                 showPopup(result);
             } else {
                 alert('Taşınmaz bulunamadı.\nLütfen tam ve doğru bir değer girin.');
             }
         }
-
-        // Arama Dinleyicileri (Değişiklik yok)
         document.getElementById('tapuSearchButton').addEventListener('click', () => {
             const searchTerm = document.getElementById('tapuInput').value.trim();
             if (!searchTerm) return;
@@ -503,4 +505,3 @@
     </script>
 </body>
 </html>
-
