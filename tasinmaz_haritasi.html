@@ -7,40 +7,77 @@
     <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
     <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
     <style>
-        /* ... (Stillerin çoğu aynı) ... */
         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
-        .header { position: absolute; top: 20px; left: 20px; background: rgba(255, 255, 255, 0.95); padding: 20px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; max-width: 350px; }
-        .header h1 { margin: 0 0 10px 0; font-size: 24px; color: #e74c3c; }
-        .header .day { display: inline-block; background: #e74c3c; color: white; padding: 4px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; margin-bottom: 10px; }
-        .header p { margin: 5px 0; font-size: 14px; color: #555; line-height: 1.5; }
-        .stats { position: absolute; bottom: 20px; left: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px 20px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; font-size: 14px; }
-        .stats-row { display: flex; justify-content: space-between; margin: 5px 0; gap: 20px; }
-        .stats-label { color: #666; font-weight: 500; }
-        .stats-value { color: #e74c3c; font-weight: bold; font-size: 16px; }
-        .legend { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; font-size: 13px; max-width: 280px; }
-        .legend h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
-        
-        /* === DÜZELTME 1: LEJANT AYIRICI === */
-        /* İkinci 'h3' başlığına (Bağlantı Mesafesi) bir üst boşluk ve çizgi ekle */
-        .legend h3:nth-of-type(2) {
-            margin-top: 15px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-        }
-        /* === DÜZELTME 1 BİTTİ === */
 
+        /* === GELİŞTİRME 1: HEADER GÜNCELLENDİ === */
+        .header { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            /* Daha şeffaf, daha az padding, daha geniş */
+            background: rgba(255, 255, 255, 0.85); 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            z-index: 1; 
+            max-width: 500px; 
+        }
+        .header h1 { margin: 0 0 5px 0; font-size: 20px; color: #e74c3c; }
+        .header .day { padding: 3px 8px; font-size: 10px; margin-bottom: 8px; }
+        .header p { margin: 4px 0; font-size: 13px; color: #444; line-height: 1.4; }
+        /* === BİTTİ === */
+
+
+        /* === GELİŞTİRME 3: STATS SAĞ ÜSTE ALINDI === */
+        .stats { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            background: rgba(255, 255, 255, 0.9); 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            z-index: 1; 
+            font-size: 13px; 
+            min-width: 180px;
+        }
+        .stats-row { display: flex; justify-content: space-between; margin: 4px 0; gap: 15px; }
+        .stats-label { color: #555; font-weight: 500; }
+        .stats-value { color: #e74c3c; font-weight: bold; font-size: 15px; }
+        /* === BİTTİ === */
+        
+
+        /* === GELİŞTİRME 2 & 3: LEJANT SAĞ ALTA ALINDI VE YAN YANA === */
+        .legend-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1;
+            display: flex; /* İki lejant kutusunu yan yana koy */
+            gap: 10px;
+        }
+        .legend-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 13px;
+        }
+        .legend-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
         .legend-item { display: flex; align-items: center; margin: 8px 0; }
         .legend-color-circle { width: 15px; height: 15px; margin-right: 10px; border-radius: 50%; border: 1px solid #777; }
         .legend-color-line { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
         .legend-label { color: #666; }
+        /* === BİTTİ === */
 
-        /* === GELİŞTİRME 9: AÇILIR PANEL STİLLERİ === */
-        .controls { 
+
+        /* === GELİŞTİRME 3: KONTROL PANELİ SOLA ALINDI (AÇILIR/KAPANIR) === */
+        .controls-container {
             position: absolute; 
-            bottom: 20px; 
-            right: 20px; 
-            z-index: 2; /* Lejantın üstünde kalsın */
+            top: 170px; /* Başlığın bittiği yerin altı (yaklaşık) */
+            left: 20px; 
+            z-index: 2; /* Diğer panellerin üstünde */
             max-width: 240px; 
             width: 100%;
         }
@@ -79,11 +116,12 @@
         .controls-content {
             background: rgba(255, 255, 255, 0.95);
             padding: 15px;
-            max-height: 70vh; /* Yüksekliği sınırla, gerekirse kaydırma çubuğu çıksın */
+            max-height: 70vh; /* Yüksekliği sınırla */
             overflow-y: auto;
-            transition: max-height 0.3s ease-out, padding 0.3s ease-out, box-shadow 0.3s ease-out;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out, box-shadow 0.3s ease-out, visibility 0.3s;
             border-radius: 0 0 8px 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            visibility: visible;
         }
         
         /* Kapalı durum */
@@ -93,9 +131,21 @@
             padding-bottom: 0;
             overflow: hidden;
             box-shadow: none;
+            visibility: hidden;
         }
-        /* === GELİŞTİRME 9 BİTTİ === */
+        /* === BİTTİ === */
+        
+        /* === GELİŞTİRME 4: HOME BUTONU STİLİ === */
+        #resetViewButton {
+            background-color: #3498DB;
+            margin-bottom: 10px; /* Kontrol panelinden ayır */
+        }
+        #resetViewButton:hover {
+            background-color: #2980b9;
+        }
+        /* === BİTTİ === */
 
+        /* Diğer stiller (Değişiklik yok) */
         .control-group { margin: 10px 0; }
         .control-label { font-size: 12px; color: #666; margin-bottom: 5px; display: block; }
         input[type="range"] { width: 100%; }
@@ -122,18 +172,6 @@
 <body>
     <div id="map"></div>
     
-    <div class="header">
-        <div class="day">AŞAMA 9</div>
-        <h1>Taşınmaz Ağı Haritası</h1>
-        <p>Kurumun <strong>~7,000</strong> taşınmaz noktası arasındaki bağlantı ağı.</p>
-        <p style="font-size: 12px; color: #888; margin-top: 10px;">
-            🖱️ Harita üzerinde gezinin - mouse konumuna göre taşınmazlar arası örümcek ağı oluşur.
-        </p>
-        <p style="font-size: 11px; color: #999; margin-top: 8px; border-top: 1px solid #eee; padding-top: 8px;">
-            <strong>Veri Kaynağı:</strong><br>
-            Kurum Taşınmazları Verisi (GeoJSON)
-        </p>
-    </div>
     <div class="stats">
         <div class="stats-row">
             <span class="stats-label">Aktif Bağlantı:</span>
@@ -144,80 +182,95 @@
             <span class="stats-value" id="nearestDistance">-</span>
         </div>
     </div>
-    
-    <div class="legend">
-        <h3>Taşınmaz Grubu</h3>
-        <div class="legend-item"><div class="legend-color-circle" style="background: #E74C3C;"></div><span class="legend-label">KONUT</span></div>
-        <div class="legend-item"><div class="legend-color-circle" style="background: #2ECC71;"></div><span class="legend-label">ARSA</span></div>
-        <div class="legend-item"><div class="legend-color-circle" style="background: #F39C12;"></div><span class="legend-label">TARLA</span></div>
-        <div class="legend-item"><div class="legend-color-circle" style="background: #3498DB;"></div><span class="legend-label">İŞYERİ</span></div>
-        <div class="legend-item"><div class="legend-color-circle" style="background: #9B59B6;"></div><span class="legend-label">DİĞER</span></div>
-        
-        <h3 style="margin-top: 15px;">Bağlantı Mesafesi</h3>
-        <div class="legend-item"><div class="legend-color-line" style="background: #27ae60; opacity: 0.9;"></div><span class="legend-label">0-500m</span></div>
-        <div class="legend-item"><div class="legend-color-line" style="background: #f39c12; opacity: 0.8;"></div><span class="legend-label">500m-1km</span></div>
-        <div class="legend-item"><div class="legend-color-line" style="background: #e67e22; opacity: 0.7;"></div><span class="legend-label">1-2km</span></div>
-        <div class="legend-item"><div class="legend-color-line" style="background: #e74c3c; opacity: 0.5;"></div><span class="legend-label">2-3km</span></div>
-        <div class="legend-item"><div class="legend-color-line" style="background: #c0392b; opacity: 0.3;"></div><span class="legend-label">3km+</span></div>
+
+    <div class="left-panel-container">
+        <div class="header">
+            <div class="day">AŞAMA 9</div>
+            <h1>Taşınmaz Ağı Haritası</h1>
+            <p>Kurumun ~7,000 taşınmaz noktası arasındaki bağlantı ağı.</p>
+            <p style="font-size: 11px; color: #666; margin-top: 8px; border-top: 1px solid #ccc; padding-top: 8px;">
+                <strong>Veri Kaynağı:</strong> Kurum Taşınmazları Verisi (GeoJSON)
+            </p>
+        </div>
+
+        <button id="resetViewButton" style="width: 240px; margin-top: 10px;">Görünümü Sıfırla (Türkiye)</button>
+
+        <div class="controls">
+            <div class="controls-toggle" id="controlsToggle">
+                Filtreler ve Arama
+                <span id="toggleIcon">▼</span>
+            </div>
+            <div class="controls-content" id="controlsContent">
+                <div class="control-group">
+                    <label class="control-label">Tapu Sicil ile Ara</label>
+                    <div class="search-container">
+                        <input type="text" id="tapuInput" placeholder="Tapu Sicil No...">
+                        <button id="tapuSearchButton">Ara</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Ada / Parsel ile Ara</label>
+                    <div class="ada-parsel-container">
+                        <input type="text" id="adaInput" placeholder="Ada No...">
+                        <input type="text" id="parselInput" placeholder="Parsel No...">
+                    </div>
+                    <button id="adaParselSearchButton" style="margin-top: 5px;">Ara</button>
+                </div>
+                <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
+                    <label class="control-label">Taşınmaz Grubu Filtresi</label>
+                    <select id="filterGroupSelect">
+                        <option value="TÜMÜ">TÜMÜ GÖSTER</option>
+                        <option value="ARSA">ARSA</option>
+                        <option value="TARLA">TARLA</option>
+                        <option value="KONUT">KONUT</option>
+                        <option value="İŞYERİ">İŞYERİ</option>
+                        <option value="DİĞER">DİĞER</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">İl Filtresi</label>
+                    <select id="ilFilter">
+                        <option value="TÜMÜ">TÜM İLLER</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">İlçe Filtresi</label>
+                    <select id="ilceFilter" disabled>
+                        <option value="TÜMÜ">TÜM İLÇELER</option>
+                    </select>
+                </div>
+                <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
+                    <button id="clearFiltersButton">Arama/Filtreleri Temizle</button>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Maksimum Mesafe</label>
+                    <input type="range" id="maxDistance" min="500" max="5000" step="100" value="3000">
+                    <span class="control-value" id="maxDistanceValue">3000m</span>
+                </div>
+                <div class="control-group">
+                    <label class="control-label">Maksimum Taşınmaz</label>
+                    <input type="range" id="maxConnections" min="10" max="200" step="10" value="50">
+                    <span class="control-value" id="maxConnectionsValue">50</span>
+                </div>
+                <button id="toggleAnimation">Animasyonu Durdur</button>
+            </div>
+        </div>
     </div>
-
-    <div class="controls">
-        <div class="controls-toggle" id="controlsToggle">
-            Filtreler ve Arama
-            <span>▼</span> </div>
-
-        <div class="controls-content" id="controlsContent"> <div class="control-group">
-                <label class="control-label">Tapu Sicil ile Ara</label>
-                <div class="search-container">
-                    <input type="text" id="tapuInput" placeholder="Tapu Sicil No...">
-                    <button id="tapuSearchButton">Ara</button>
-                </div>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Ada / Parsel ile Ara</label>
-                <div class="ada-parsel-container">
-                    <input type="text" id="adaInput" placeholder="Ada No...">
-                    <input type="text" id="parselInput" placeholder="Parsel No...">
-                </div>
-                <button id="adaParselSearchButton" style="margin-top: 5px;">Ara</button>
-            </div>
-            <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
-                <label class="control-label">Taşınmaz Grubu Filtresi</label>
-                <select id="filterGroupSelect">
-                    <option value="TÜMÜ">TÜMÜ GÖSTER</option>
-                    <option value="ARSA">ARSA</option>
-                    <option value="TARLA">TARLA</option>
-                    <option value="KONUT">KONUT</option>
-                    <option value="İŞYERİ">İŞYERİ</option>
-                    <option value="DİĞER">DİĞER</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label class="control-label">İl Filtresi</label>
-                <select id="ilFilter">
-                    <option value="TÜMÜ">TÜM İLLER</option>
-                </select>
-            </div>
-            <div class="control-group">
-                <label class="control-label">İlçe Filtresi</label>
-                <select id="ilceFilter" disabled>
-                    <option value="TÜMÜ">TÜM İLÇELER</option>
-                </select>
-            </div>
-            <div class="control-group" style="border-top: 1px solid #eee; padding-top: 10px;">
-                <button id="clearFiltersButton">Arama/Filtreleri Temizle</button>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Maksimum Mesafe</label>
-                <input type="range" id="maxDistance" min="500" max="5000" step="100" value="3000">
-                <span class="control-value" id="maxDistanceValue">3000m</span>
-            </div>
-            <div class="control-group">
-                <label class="control-label">Maksimum Taşınmaz</label>
-                <input type="range" id="maxConnections" min="10" max="200" step="10" value="50">
-                <span class="control-value" id="maxConnectionsValue">50</span>
-            </div>
-            <button id="toggleAnimation">Animasyonu Durdur</button>
+    
+    <div class="legend-container">
+        <div class="legend-box"> <h3>Taşınmaz Grubu</h3>
+            <div class="legend-item"><div class="legend-color-circle" style="background: #E74C3C;"></div><span class="legend-label">KONUT</span></div>
+            <div class="legend-item"><div class="legend-color-circle" style="background: #2ECC71;"></div><span class="legend-label">ARSA</span></div>
+            <div class="legend-item"><div class="legend-color-circle" style="background: #F39C12;"></div><span class="legend-label">TARLA</span></div>
+            <div class="legend-item"><div class="legend-color-circle" style="background: #3498DB;"></div><span class="legend-label">İŞYERİ</span></div>
+            <div class="legend-item"><div class="legend-color-circle" style="background: #9B59B6;"></div><span class="legend-label">DİĞER</span></div>
+        </div>
+        <div class="legend-box"> <h3>Bağlantı Mesafesi</h3>
+            <div class="legend-item"><div class="legend-color-line" style="background: #27ae60; opacity: 0.9;"></div><span class="legend-label">0-500m</span></div>
+            <div class="legend-item"><div class="legend-color-line" style="background: #f39c12; opacity: 0.8;"></div><span class="legend-label">500m-1km</span></div>
+            <div class="legend-item"><div class="legend-color-line" style="background: #e67e22; opacity: 0.7;"></div><span class="legend-label">1-2km</span></div>
+            <div class="legend-item"><div class="legend-color-line" style="background: #e74c3c; opacity: 0.5;"></div><span class="legend-label">2-3km</span></div>
+            <div class="legend-item"><div class="legend-color-line" style="background: #c0392b; opacity: 0.3;"></div><span class="legend-label">3km+</span></div>
         </div>
     </div>
     <script>
@@ -268,18 +321,14 @@
                 data.features.forEach(feature => {
                     const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
                     feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
-                    
                     const il = feature.properties['İl_Adı'];
                     const ilce = feature.properties['İlçe_Adı'];
                     const coords = feature.geometry.coordinates;
-                    
                     if (il) {
                         const ilUpper = il.trim().toLocaleUpperCase('tr');
                         const ilceUpper = ilce ? ilce.trim().toLocaleUpperCase('tr') : null;
-                        
                         feature.properties.IL_UPPER = ilUpper;
                         feature.properties.ILCE_UPPER = ilceUpper;
-
                         iller.add(ilUpper); 
                         if (ilceUpper) {
                             if (!ilceMap.has(ilUpper)) { ilceMap.set(ilUpper, new Set()); }
@@ -295,7 +344,6 @@
                         }
                     }
                 });
-                
                 const sortedIller = [...iller].sort((a, b) => a.localeCompare(b, 'tr'));
                 sortedIller.forEach(il => {
                     const option = document.createElement('option');
@@ -327,10 +375,10 @@
                     });
 
                     // Parsel Yükleme (GÜNCELLENDİ)
-                    fetch('parseller_simple.geojson') // 'parseller.geojson' DEĞİL!
+                    fetch('parseller.geojson') // 'parseller_simple.geojson' DEĞİL, SİZİNKİ YÜKLENDİ!
                         .then(response => response.json())
                         .then(parselData => {
-                            console.log(`Loaded ${parselData.features.length} simplified parcels.`);
+                            console.log(`Loaded ${parselData.features.length} parcels.`);
                             
                             // Parsellere de BÜYÜK harf İl/İlçe ekle
                             parselData.features.forEach(feature => {
@@ -362,7 +410,7 @@
                             }, 'tasinmazlar-layer'); // Noktaların altında çiz
                         
                         }).catch(err => {
-                            console.warn('Parsel verisi yüklenemedi (parseller_simple.geojson bulunamadı mı?):', err);
+                            console.warn('Parsel verisi yüklenemedi (parseller.geojson bulunamadı mı?):', err);
                         });
 
                     map.addSource('spider-lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
@@ -492,6 +540,8 @@
                 }
             }
         }
+        
+        // GÜNCELLENDİ: 'Temizle' fonksiyonu
         function clearAll() {
             document.getElementById('tapuInput').value = '';
             document.getElementById('adaInput').value = '';
@@ -505,6 +555,15 @@
                 currentPopup = null;
             }
             resetView(); 
+        }
+        
+        // YENİ: 'Görünümü Sıfırla' fonksiyonu
+        function resetView() {
+            map.flyTo(TURKIYE_VIEW);
+             if (currentPopup) {
+                currentPopup.remove();
+                currentPopup = null;
+            }
         }
 
         // Filtre Dinleyicileri (İl Zoom) (Değişiklik yok)
@@ -530,6 +589,9 @@
         });
         document.getElementById('ilceFilter').addEventListener('change', applyAllFilters);
         document.getElementById('clearFiltersButton').addEventListener('click', clearAll);
+        
+        // === GELİŞTİRME 4: HOME BUTONU DİNLEYİCİSİ ===
+        document.getElementById('resetViewButton').addEventListener('click', resetView);
 
 
         // Pop-up Fonksiyonu ve Tıklama (Değişiklik yok)
@@ -560,7 +622,16 @@
         // Arama (Büyük/Küçük Harf)
         function findAndFly(result) {
             if (result) {
-                clearAll(); 
+                // Arama yapınca filtreleri temizle (ama zoom'u değil)
+                document.getElementById('tapuInput').value = '';
+                document.getElementById('adaInput').value = '';
+                document.getElementById('parselInput').value = '';
+                document.getElementById('filterGroupSelect').value = 'TÜMÜ';
+                document.getElementById('ilFilter').value = 'TÜMÜ';
+                updateIlceFilter();
+                applyAllFilters();
+                
+                // Sonra uç ve pop-up aç
                 map.flyTo({ center: result.geometry.coordinates, zoom: 17, speed: 1.5 });
                 showPopup(result);
             } else {
@@ -595,9 +666,17 @@
         document.getElementById('controlsToggle').addEventListener('click', () => {
             const content = document.getElementById('controlsContent');
             const toggle = document.getElementById('controlsToggle');
+            const icon = document.getElementById('toggleIcon');
             
             content.classList.toggle('collapsed');
             toggle.classList.toggle('collapsed-header');
+            
+            // Ok ikonunu değiştir
+            if (content.classList.contains('collapsed')) {
+                icon.innerHTML = '►'; // Kapalıyken
+            } else {
+                icon.innerHTML = '▼'; // Açıkken
+            }
         });
         
     </script>
