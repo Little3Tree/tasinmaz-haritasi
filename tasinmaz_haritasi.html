@@ -21,7 +21,8 @@
         .legend { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; font-size: 13px; max-width: 280px; }
         .legend h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
         .legend-item { display: flex; align-items: center; margin: 8px 0; }
-        .legend-color { width: 15px; height: 15px; margin-right: 10px; border-radius: 50%; border: 1px solid #777; } /* === GÜNCEL STİL (Daire) === */
+        .legend-color-circle { width: 15px; height: 15px; margin-right: 10px; border-radius: 50%; border: 1px solid #777; }
+        .legend-color-line { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
         .legend-label { color: #666; }
         .controls { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; max-width: 240px; max-height: 80vh; overflow-y: auto; }
         .control-group { margin: 10px 0; }
@@ -50,10 +51,8 @@
 <body>
     <div id="map"></div>
     
-    <div class="header"> ... (içerik aynı) ... </div>
-    <div class="stats"> ... (içerik aynı) ... </div>
     <div class="header">
-        <div class="day">AŞAMA 5</div>
+        <div class="day">AŞAMA 8</div>
         <h1>Taşınmaz Ağı Haritası</h1>
         <p>Kurumun <strong>~7,000</strong> taşınmaz noktası arasındaki bağlantı ağı.</p>
         <p style="font-size: 12px; color: #888; margin-top: 10px;">
@@ -74,24 +73,22 @@
             <span class="stats-value" id="nearestDistance">-</span>
         </div>
     </div>
-
     <div class="legend">
         <h3>Taşınmaz Grubu</h3>
-        <div class="legend-item"><div class="legend-color" style="background: #E74C3C;"></div><span class="legend-label">KONUT</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #2ECC71;"></div><span class="legend-label">ARSA</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #F39C12;"></div><span class="legend-label">TARLA</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #3498DB;"></div><span class="legend-label">İŞYERİ</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #9B59B6;"></div><span class="legend-label">DİĞER</span></div>
+        <div class="legend-item"><div class="legend-color-circle" style="background: #E74C3C;"></div><span class="legend-label">KONUT</span></div>
+        <div class="legend-item"><div class="legend-color-circle" style="background: #2ECC71;"></div><span class="legend-label">ARSA</span></div>
+        <div class="legend-item"><div class="legend-color-circle" style="background: #F39C12;"></div><span class="legend-label">TARLA</span></div>
+        <div class="legend-item"><div class="legend-color-circle" style="background: #3498DB;"></div><span class="legend-label">İŞYERİ</span></div>
+        <div class="legend-item"><div class="legend-color-circle" style="background: #9B59B6;"></div><span class="legend-label">DİĞER</span></div>
         
         <h3 style="margin-top: 15px;">Bağlantı Mesafesi</h3>
-        <div class="legend-item"><div class="legend-color" style="background: #27ae60; opacity: 0.9; height: 3px; border: none;"></div><span class="legend-label">0-500m</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #f39c12; opacity: 0.8; height: 3px; border: none;"></div><span class="legend-label">500m-1km</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #e67e22; opacity: 0.7; height: 3px; border: none;"></div><span class="legend-label">1-2km</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #e74c3c; opacity: 0.5; height: 3px; border: none;"></div><span class="legend-label">2-3km</span></div>
-        <div class="legend-item"><div class="legend-color" style="background: #c0392b; opacity: 0.3; height: 3px; border: none;"></div><span class="legend-label">3km+</span></div>
+        <div class="legend-item"><div class="legend-color-line" style="background: #27ae60; opacity: 0.9;"></div><span class="legend-label">0-500m</span></div>
+        <div class="legend-item"><div class="legend-color-line" style="background: #f39c12; opacity: 0.8;"></div><span class="legend-label">500m-1km</span></div>
+        <div class="legend-item"><div class="legend-color-line" style="background: #e67e22; opacity: 0.7;"></div><span class="legend-label">1-2km</span></div>
+        <div class="legend-item"><div class="legend-color-line" style="background: #e74c3c; opacity: 0.5;"></div><span class="legend-label">2-3km</span></div>
+        <div class="legend-item"><div class="legend-color-line" style="background: #c0392b; opacity: 0.3;"></div><span class="legend-label">3km+</span></div>
     </div>
 
-    <div class="controls"> ... (içerik aynı) ... </div>
     <div class="controls">
         <div class="control-group">
             <label class="control-label">Tapu Sicil ile Ara</label>
@@ -195,29 +192,41 @@
                 data.features.forEach(feature => {
                     const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
                     feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
+                    
                     const il = feature.properties['İl_Adı'];
                     const ilce = feature.properties['İlçe_Adı'];
                     const coords = feature.geometry.coordinates;
+                    
                     if (il) {
-                        iller.add(il.trim()); 
-                        if (ilce) {
-                            if (!ilceMap.has(il)) { ilceMap.set(il, new Set()); }
-                            ilceMap.get(il).add(ilce.trim());
+                        // === GELİŞTİRME 8.1: BÜYÜK HARF DÖNÜŞÜMÜ ===
+                        const ilUpper = il.trim().toLocaleUpperCase('tr');
+                        const ilceUpper = ilce ? ilce.trim().toLocaleUpperCase('tr') : null;
+                        
+                        // Orijinalleri korurken, filtreleme için yenilerini ekle
+                        feature.properties.IL_UPPER = ilUpper;
+                        feature.properties.ILCE_UPPER = ilceUpper;
+
+                        iller.add(ilUpper); 
+                        if (ilceUpper) {
+                            if (!ilceMap.has(ilUpper)) { ilceMap.set(ilUpper, new Set()); }
+                            ilceMap.get(ilUpper).add(ilceUpper);
                         }
-                        if (!ilBboxMap.has(il)) {
-                            ilBboxMap.set(il, [coords[0], coords[1], coords[0], coords[1]]);
+                        if (!ilBboxMap.has(ilUpper)) {
+                            ilBboxMap.set(ilUpper, [coords[0], coords[1], coords[0], coords[1]]);
                         } else {
-                            const bbox = ilBboxMap.get(il);
+                            const bbox = ilBboxMap.get(ilUpper); // ilUpper kullan
                             bbox[0] = Math.min(bbox[0], coords[0]); bbox[1] = Math.min(bbox[1], coords[1]);
                             bbox[2] = Math.max(bbox[2], coords[0]); bbox[3] = Math.max(bbox[3], coords[1]);
-                            ilBboxMap.set(il, bbox);
+                            ilBboxMap.set(ilUpper, bbox);
                         }
                     }
                 });
+                // === BİTTİ ===
+                
                 const sortedIller = [...iller].sort((a, b) => a.localeCompare(b, 'tr'));
                 sortedIller.forEach(il => {
                     const option = document.createElement('option');
-                    option.value = il; option.textContent = il;
+                    option.value = il; option.textContent = il; // Değer ve metin BÜYÜK harf
                     ilSelect.appendChild(option);
                 });
                 allPoints = data.features;
@@ -227,61 +236,62 @@
                 map.on('load', () => {
                     map.addSource('tasinmazlar', { type: 'geojson', data: data });
 
-                    // === GELİŞTİRME 5: RENKLENDİRME GÜNCELLENDİ ===
-                    // Nokta katmanı (Taşınmazlar)
+                    // Renklendirme (Değişiklik yok)
                     map.addLayer({
                         id: 'tasinmazlar-layer', 
                         type: 'circle', 
                         source: 'tasinmazlar',
                         paint: {
-                            // 'circle-color' artık statik bir renk değil,
-                            // 'FiltreGrubu' özelliğine göre dinamik bir renktir.
                             'circle-color': [
                                 'match',
                                 ['get', 'FiltreGrubu'],
-                                'KONUT', '#E74C3C',   // Kırmızı
-                                'ARSA', '#2ECC71',    // Yeşil
-                                'TARLA', '#F39C12',   // Turuncu
-                                'İŞYERİ', '#3498DB',  // Mavi
-                                'DİĞER', '#9B59B6',   // Mor
-                                '#95A5A6' // Eşleşmeyenler (varsayılan)
+                                'KONUT', '#E74C3C', 'ARSA', '#2ECC71', 'TARLA', '#F39C12',
+                                'İŞYERİ', '#3498DB', 'DİĞER', '#9B59B6', '#95A5A6'
                             ],
-                            'circle-radius': 4, // Noktaları biraz büyüttüm
-                            'circle-opacity': 0.8,
-                            'circle-stroke-width': 1,
-                            'circle-stroke-color': '#ffffff'
+                            'circle-radius': 4, 'circle-opacity': 0.8,
+                            'circle-stroke-width': 1, 'circle-stroke-color': '#ffffff'
                         }
                     });
 
-                    // === GELİŞTİRME 6: PARSEL KATMANI EKLENDİ ===
-                    // (Bu kodun çalışması için 'parseller.geojson' dosyasının
-                    // 'tasinmaz_haritasi.html' ile aynı klasörde olması gerekir)
+                    // Parsel Yükleme (GÜNCELLENDİ)
                     fetch('parseller.geojson')
                         .then(response => response.json())
                         .then(parselData => {
                             console.log(`Loaded ${parselData.features.length} parcels.`);
+                            
+                            // === GELİŞTİRME 8.1: PARSELLERE DE BÜYÜK HARF EKLE ===
+                            parselData.features.forEach(feature => {
+                                const il = feature.properties['İl_Adı'];
+                                const ilce = feature.properties['İlçe_Adı'];
+                                if (il) {
+                                    feature.properties.IL_UPPER = il.trim().toLocaleUpperCase('tr');
+                                }
+                                if (ilce) {
+                                    feature.properties.ILCE_UPPER = ilce.trim().toLocaleUpperCase('tr');
+                                }
+                            });
+                            // === BİTTİ ===
+
                             map.addSource('parseller-source', {
                                 type: 'geojson',
-                                data: parselData
+                                data: parselData 
                             });
                             
-                            // Parsel katmanını, 'tasinmazlar-layer'ın ALTINA ekle
-                            // Böylece noktalar parsellerin üstünde görünür
                             map.addLayer({
                                 id: 'parseller-layer',
                                 type: 'fill',
                                 source: 'parseller-source',
+                                minzoom: 13, // Zoom 13+ olunca göster
                                 paint: {
-                                    'fill-color': '#95A5A6', // Gri (veya başka bir renk)
+                                    'fill-color': '#95A5A6', 
                                     'fill-opacity': 0.3,
                                     'fill-outline-color': '#000000'
                                 }
-                            }, 'tasinmazlar-layer'); // Bu 'beforeId' önemlidir!
+                            }, 'tasinmazlar-layer'); // Noktaların altında çiz
                         
                         }).catch(err => {
                             console.warn('Parsel verisi yüklenemedi (parseller.geojson bulunamadı mı?):', err);
                         });
-                    // === GELİŞTİRME 6 BİTTİ ===
 
                     map.addSource('spider-lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
                     map.addLayer({ id: 'spider-lines-layer', type: 'line', source: 'spider-lines', paint: { 'line-width': ['get', 'width'], 'line-color': ['get', 'color'], 'line-opacity': ['get', 'opacity'] } });
@@ -355,29 +365,39 @@
             } else if (mousePosition) { updateSpider(mousePosition); }
         });
 
-        // Filtreleme Fonksiyonları (Değişiklik yok)
+        // === GELİŞTİRME 8.1: AKILLI FİLTRELEME GÜNCELLENDİ ===
         function applyAllFilters() {
+            // Değerler artık BÜYÜK harf
             const grup = document.getElementById('filterGroupSelect').value;
             const il = document.getElementById('ilFilter').value;
             const ilce = document.getElementById('ilceFilter').value;
-            let mapFilter = ['all']; 
+            
+            // --- NOKTA FİLTRESİ (TAŞINMAZLAR) ---
+            let pointMapFilter = ['all']; 
+            
             filteredPoints = allPoints.filter(feature => {
                 const props = feature.properties;
                 let grupMatch = (grup === 'TÜMÜ') || (props.FiltreGrubu === grup);
-                let ilMatch = (il === 'TÜMÜ') || (props['İl_Adı'] === il);
-                let ilceMatch = (ilce === 'TÜMÜ') || (props['İlçe_Adı'] === ilce);
+                // Artık IL_UPPER ve ILCE_UPPER ile karşılaştır
+                let ilMatch = (il === 'TÜMÜ') || (props.IL_UPPER === il);
+                let ilceMatch = (ilce === 'TÜMÜ') || (props.ILCE_UPPER === ilce);
                 return grupMatch && ilMatch && ilceMatch;
             });
-            if (grup !== 'TÜMÜ') { mapFilter.push(['==', ['get', 'FiltreGrubu'], grup]); }
-            if (il !== 'TÜMÜ') { mapFilter.push(['==', ['get', 'İl_Adı'], il]); }
-            if (ilce !== 'TÜMÜ') { mapFilter.push(['==', ['get', 'İlçe_Adı'], ilce]); }
-            map.setFilter('tasinmazlar-layer', mapFilter.length > 1 ? mapFilter : null);
             
-            // === GELİŞTİRME 6: PARSEL FİLTRESİ ===
-            // Noktalar filtrelendiğinde, parselleri de filtrele
-            // (Bu kod, 'parseller-layer' katmanının yüklendiğini varsayar)
+            if (grup !== 'TÜMÜ') { pointMapFilter.push(['==', ['get', 'FiltreGrubu'], grup]); }
+            // Artık IL_UPPER ve ILCE_UPPER'a göre filtrele
+            if (il !== 'TÜMÜ') { pointMapFilter.push(['==', ['get', 'IL_UPPER'], il]); }
+            if (ilce !== 'TÜMÜ') { pointMapFilter.push(['==', ['get', 'ILCE_UPPER'], ilce]); }
+            
+            map.setFilter('tasinmazlar-layer', pointMapFilter.length > 1 ? pointMapFilter : null);
+
+            // --- PARSEL FİLTRESİ (SADECE İL/İLÇE) ---
+            let parselMapFilter = ['all'];
+            if (il !== 'TÜMÜ') { parselMapFilter.push(['==', ['get', 'IL_UPPER'], il]); }
+            if (ilce !== 'TÜMÜ') { parselMapFilter.push(['==', ['get', 'ILCE_UPPER'], ilce]); }
+
             if (map.getLayer('parseller-layer')) {
-                map.setFilter('parseller-layer', mapFilter.length > 1 ? mapFilter : null);
+                map.setFilter('parseller-layer', parselMapFilter.length > 1 ? parselMapFilter : null);
             }
             // === BİTTİ ===
 
@@ -386,19 +406,19 @@
             }
         }
         function updateIlceFilter() {
-            const selectedIl = document.getElementById('ilFilter').value;
+            const selectedIl = document.getElementById('ilFilter').value; // Bu zaten BÜYÜK harf
             const ilceSelect = document.getElementById('ilceFilter');
             ilceSelect.innerHTML = '<option value="TÜMÜ">TÜM İLÇELER</option>'; 
             if (selectedIl === 'TÜMÜ') {
                 ilceSelect.disabled = true; 
             } else {
                 ilceSelect.disabled = false; 
-                const ilceler = ilceMap.get(selectedIl);
+                const ilceler = ilceMap.get(selectedIl); // Harita BÜYÜK harf ile kayıtlı
                 if (ilceler) {
                     const sortedIlceler = [...ilceler].sort((a, b) => a.localeCompare(b, 'tr'));
                     sortedIlceler.forEach(ilce => {
                         const option = document.createElement('option');
-                        option.value = ilce; option.textContent = ilce;
+                        option.value = ilce; option.textContent = ilce; // Değer BÜYÜK harf
                         ilceSelect.appendChild(option);
                     });
                 }
@@ -419,16 +439,16 @@
             resetView(); 
         }
 
-        // Filtre Dinleyicileri (Değişiklik yok)
+        // Filtre Dinleyicileri (İl Zoom)
         document.getElementById('filterGroupSelect').addEventListener('change', applyAllFilters);
         document.getElementById('ilFilter').addEventListener('change', () => {
             updateIlceFilter(); 
             applyAllFilters();  
-            const selectedIl = document.getElementById('ilFilter').value;
+            const selectedIl = document.getElementById('ilFilter').value; // Bu zaten BÜYÜK harf
             if (selectedIl === 'TÜMÜ') {
                 resetView(); 
             } else {
-                const bbox = ilBboxMap.get(selectedIl);
+                const bbox = ilBboxMap.get(selectedIl); // BÜYÜK harf ile ara
                 if (bbox) {
                     if (bbox[0] === bbox[2] && bbox[1] === bbox[3]) {
                         map.flyTo({ center: [bbox[0], bbox[1]], zoom: 15 });
@@ -444,7 +464,7 @@
         document.getElementById('clearFiltersButton').addEventListener('click', clearAll);
 
 
-        // Pop-up Fonksiyonu ve Tıklama (Değişiklik yok)
+        // Pop-up Fonksiyonu ve Tıklama (Değişiklik yok, orijinal adı gösteriyor)
         function showPopup(feature) {
             const coords = feature.geometry.coordinates.slice(); const props = feature.properties; 
             let html = `<div class="popup-container">`;
@@ -469,7 +489,8 @@
         }
         map.on('click', 'tasinmazlar-layer', (e) => { showPopup(e.features[0]); });
         
-        // Arama Fonksiyonları (Değişiklik yok)
+        // === GELİŞTİRME 8.1: ARAMA FONKSİYONLARI GÜNCELLENDİ ===
+        // Artık büyük/küçük harfe duyarsız arama yapıyor
         function findAndFly(result) {
             if (result) {
                 clearAll(); 
@@ -479,21 +500,23 @@
                 alert('Taşınmaz bulunamadı.\nLütfen tam ve doğru bir değer girin.');
             }
         }
+
         document.getElementById('tapuSearchButton').addEventListener('click', () => {
-            const searchTerm = document.getElementById('tapuInput').value.trim();
+            const searchTerm = document.getElementById('tapuInput').value.trim().toLocaleUpperCase('tr');
             if (!searchTerm) return;
             const result = allPoints.find(feature => {
-                 return String(feature.properties.Tapu_Sicil).trim() === searchTerm;
+                 return String(feature.properties.Tapu_Sicil).trim().toLocaleUpperCase('tr') === searchTerm;
             });
             findAndFly(result);
         });
+
         document.getElementById('adaParselSearchButton').addEventListener('click', () => {
-            const adaTerm = document.getElementById('adaInput').value.trim();
-            const parselTerm = document.getElementById('parselInput').value.trim();
+            const adaTerm = document.getElementById('adaInput').value.trim().toLocaleUpperCase('tr');
+            const parselTerm = document.getElementById('parselInput').value.trim().toLocaleUpperCase('tr');
             if (!adaTerm || !parselTerm) { alert('Lütfen hem Ada hem de Parsel numarasını girin.'); return; }
             const result = allPoints.find(feature => {
-                const propAda = String(feature.properties.Ada).trim();
-                const propParsel = String(feature.properties.Parsel).trim();
+                const propAda = String(feature.properties.Ada).trim().toLocaleUpperCase('tr');
+                const propParsel = String(feature.properties.Parsel).trim().toLocaleUpperCase('tr');
                 return propAda === adaTerm && propParsel === parselTerm;
             });
             findAndFly(result);
