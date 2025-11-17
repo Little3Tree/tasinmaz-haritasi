@@ -18,27 +18,33 @@
         .stats-row { display: flex; justify-content: space-between; margin: 5px 0; gap: 20px; }
         .stats-label { color: #666; font-weight: 500; }
         .stats-value { color: #e74c3c; font-weight: bold; font-size: 16px; }
-        .legend { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; font-size: 13px; max-width: 280px; }
-        .legend h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
-        .legend-item { display: flex; align-items: center; margin: 8px 0; }
         
-        /* === DÜZELTME 1: LEJANT STİLLERİ AYRILDI === */
-        .legend-color-circle {
-            width: 15px;
-            height: 15px;
-            margin-right: 10px;
-            border-radius: 50%;
-            border: 1px solid #777;
+        /* === DÜZELTME 1: LEJANT CSS GÜNCELLENDİ === */
+        /* Ortak Kutu Stili */
+        .legend-box {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            z-index: 1;
+            font-size: 13px;
+            max-width: 280px;
         }
-        .legend-color-line {
-            width: 30px;
-            height: 3px;
-            margin-right: 10px;
-            border-radius: 2px;
+        /* İKİNCİ Lejantı birincinin altına it */
+        .legend-box:nth-child(2) {
+            top: 255px; /* Tahmini değer, gerekirse ayarlayın */
         }
+        
+        .legend-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
+        .legend-item { display: flex; align-items: center; margin: 8px 0; }
+        .legend-color-circle { width: 15px; height: 15px; margin-right: 10px; border-radius: 50%; border: 1px solid #777; }
+        .legend-color-line { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
+        .legend-label { color: #666; }
         /* === DÜZELTME 1 BİTTİ === */
 
-        .legend-label { color: #666; }
         .controls { position: absolute; bottom: 20px; right: 20px; background: rgba(255, 255, 255, 0.95); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; max-width: 240px; max-height: 80vh; overflow-y: auto; }
         .control-group { margin: 10px 0; }
         .control-label { font-size: 12px; color: #666; margin-bottom: 5px; display: block; }
@@ -67,7 +73,7 @@
     <div id="map"></div>
     
     <div class="header">
-        <div class="day">AŞAMA 7</div>
+        <div class="day">AŞAMA 9</div>
         <h1>Taşınmaz Ağı Haritası</h1>
         <p>Kurumun <strong>~7,000</strong> taşınmaz noktası arasındaki bağlantı ağı.</p>
         <p style="font-size: 12px; color: #888; margin-top: 10px;">
@@ -89,22 +95,20 @@
         </div>
     </div>
 
-    <div class="legend">
-        <h3>Taşınmaz Grubu</h3>
+    <div class="legend-box"> <h3>Taşınmaz Grubu</h3>
         <div class="legend-item"><div class="legend-color-circle" style="background: #E74C3C;"></div><span class="legend-label">KONUT</span></div>
         <div class="legend-item"><div class="legend-color-circle" style="background: #2ECC71;"></div><span class="legend-label">ARSA</span></div>
         <div class="legend-item"><div class="legend-color-circle" style="background: #F39C12;"></div><span class="legend-label">TARLA</span></div>
         <div class="legend-item"><div class="legend-color-circle" style="background: #3498DB;"></div><span class="legend-label">İŞYERİ</span></div>
         <div class="legend-item"><div class="legend-color-circle" style="background: #9B59B6;"></div><span class="legend-label">DİĞER</span></div>
-        
-        <h3 style="margin-top: 15px;">Bağlantı Mesafesi</h3>
+    </div>
+    <div class="legend-box"> <h3 style="margin-top: 15px;">Bağlantı Mesafesi</h3>
         <div class="legend-item"><div class="legend-color-line" style="background: #27ae60; opacity: 0.9;"></div><span class="legend-label">0-500m</span></div>
         <div class="legend-item"><div class="legend-color-line" style="background: #f39c12; opacity: 0.8;"></div><span class="legend-label">500m-1km</span></div>
         <div class="legend-item"><div class="legend-color-line" style="background: #e67e22; opacity: 0.7;"></div><span class="legend-label">1-2km</span></div>
         <div class="legend-item"><div class="legend-color-line" style="background: #e74c3c; opacity: 0.5;"></div><span class="legend-label">2-3km</span></div>
         <div class="legend-item"><div class="legend-color-line" style="background: #c0392b; opacity: 0.3;"></div><span class="legend-label">3km+</span></div>
     </div>
-
     <div class="controls">
         <div class="control-group">
             <label class="control-label">Tapu Sicil ile Ara</label>
@@ -173,7 +177,7 @@
             return 'DİĞER';
         }
         
-        // Global Değişkenler (Değişiklik yok)
+        // Global Değişkenler (Büyük/Küçük Harf Desteği)
         const TURKIYE_VIEW = { center: [35.0000, 39.0000], zoom: 6 };
         let currentPopup = null; 
         let ilceMap = new Map(); 
@@ -199,7 +203,7 @@
         let maxDistance = 3000;
         let maxConnections = 50;
 
-        // Veri Yükleme (BBOX hesaplama vb. değişiklik yok)
+        // Veri Yükleme (Büyük/Küçük Harf Desteği)
         fetch('kurum_tasinmazlari.geojson')
             .then(response => response.json())
             .then(data => {
@@ -208,25 +212,34 @@
                 data.features.forEach(feature => {
                     const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
                     feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
+                    
                     const il = feature.properties['İl_Adı'];
                     const ilce = feature.properties['İlçe_Adı'];
                     const coords = feature.geometry.coordinates;
+                    
                     if (il) {
-                        iller.add(il.trim()); 
-                        if (ilce) {
-                            if (!ilceMap.has(il)) { ilceMap.set(il, new Set()); }
-                            ilceMap.get(il).add(ilce.trim());
+                        const ilUpper = il.trim().toLocaleUpperCase('tr');
+                        const ilceUpper = ilce ? ilce.trim().toLocaleUpperCase('tr') : null;
+                        
+                        feature.properties.IL_UPPER = ilUpper;
+                        feature.properties.ILCE_UPPER = ilceUpper;
+
+                        iller.add(ilUpper); 
+                        if (ilceUpper) {
+                            if (!ilceMap.has(ilUpper)) { ilceMap.set(ilUpper, new Set()); }
+                            ilceMap.get(ilUpper).add(ilceUpper);
                         }
-                        if (!ilBboxMap.has(il)) {
-                            ilBboxMap.set(il, [coords[0], coords[1], coords[0], coords[1]]);
+                        if (!ilBboxMap.has(ilUpper)) {
+                            ilBboxMap.set(ilUpper, [coords[0], coords[1], coords[0], coords[1]]);
                         } else {
-                            const bbox = ilBboxMap.get(il);
+                            const bbox = ilBboxMap.get(ilUpper);
                             bbox[0] = Math.min(bbox[0], coords[0]); bbox[1] = Math.min(bbox[1], coords[1]);
                             bbox[2] = Math.max(bbox[2], coords[0]); bbox[3] = Math.max(bbox[3], coords[1]);
-                            ilBboxMap.set(il, bbox);
+                            ilBboxMap.set(ilUpper, bbox);
                         }
                     }
                 });
+                
                 const sortedIller = [...iller].sort((a, b) => a.localeCompare(b, 'tr'));
                 sortedIller.forEach(il => {
                     const option = document.createElement('option');
@@ -257,15 +270,25 @@
                         }
                     });
 
-                    // === DÜZELTME 2: PARSEL VERİ İŞLEME GÜNCELLENDİ ===
-                    // Artık 'FiltreGrubu' EKLENMİYOR
-                    fetch('parseller.geojson')
+                    // === DÜZELTME 2: PARSEL YÜKLEME GÜNCELLENDİ ===
+                    // Artık 'parseller_simple.geojson' dosyasını arayacak
+                    fetch('parseller_simple.geojson')
                         .then(response => response.json())
                         .then(parselData => {
-                            console.log(`Loaded ${parselData.features.length} parcels.`);
+                            console.log(`Loaded ${parselData.features.length} simplified parcels.`);
                             
-                            // ***ÖNEMLİ:*** Parsel verisi olduğu gibi yükleniyor.
-                            // 'FiltreGrubu' ekleme döngüsü kaldırıldı.
+                            // Parsellere de BÜYÜK harf İl/İlçe ekle
+                            parselData.features.forEach(feature => {
+                                const il = feature.properties['İl_Adı'];
+                                const ilce = feature.properties['İlçe_Adı'];
+                                if (il) {
+                                    feature.properties.IL_UPPER = il.trim().toLocaleUpperCase('tr');
+                                }
+                                if (ilce) {
+                                    feature.properties.ILCE_UPPER = ilce.trim().toLocaleUpperCase('tr');
+                                }
+                            });
+
                             map.addSource('parseller-source', {
                                 type: 'geojson',
                                 data: parselData 
@@ -275,10 +298,7 @@
                                 id: 'parseller-layer',
                                 type: 'fill',
                                 source: 'parseller-source',
-                                // === GELİŞTİRME 7.1: MINZOOM EKLENDİ ===
-                                // Parseller sadece zoom seviyesi 13 veya daha
-                                // yüksek olduğunda (yakınlaştıkça) görünecek.
-                                minzoom: 13, 
+                                minzoom: 13, // Sadece yakınlaşınca göster
                                 paint: {
                                     'fill-color': '#95A5A6', 
                                     'fill-opacity': 0.3,
@@ -287,7 +307,7 @@
                             }, 'tasinmazlar-layer'); // Noktaların altında çiz
                         
                         }).catch(err => {
-                            console.warn('Parsel verisi yüklenemedi (parseller.geojson bulunamadı mı?):', err);
+                            console.warn('Parsel verisi yüklenemedi (parseller_simple.geojson bulunamadı mı?):', err);
                         });
                     // === DÜZELTME 2 BİTTİ ===
 
@@ -363,7 +383,7 @@
             } else if (mousePosition) { updateSpider(mousePosition); }
         });
 
-        // === GELİŞTİRME 7.2: AKILLI FİLTRELEME ===
+        // === GELİŞTİRME 8: FİLTRELEME GÜNCELLENDİ (Büyük/Küçük Harf) ===
         function applyAllFilters() {
             const grup = document.getElementById('filterGroupSelect').value;
             const il = document.getElementById('ilFilter').value;
@@ -375,39 +395,30 @@
             filteredPoints = allPoints.filter(feature => {
                 const props = feature.properties;
                 let grupMatch = (grup === 'TÜMÜ') || (props.FiltreGrubu === grup);
-                let ilMatch = (il === 'TÜMÜ') || (props['İl_Adı'] === il);
-                let ilceMatch = (ilce === 'TÜMÜ') || (props['İlçe_Adı'] === ilce);
+                let ilMatch = (il === 'TÜMÜ') || (props.IL_UPPER === il);
+                let ilceMatch = (ilce === 'TÜMÜ') || (props.ILCE_UPPER === ilce);
                 return grupMatch && ilMatch && ilceMatch;
             });
             
             if (grup !== 'TÜMÜ') { pointMapFilter.push(['==', ['get', 'FiltreGrubu'], grup]); }
-            if (il !== 'TÜMÜ') { pointMapFilter.push(['==', ['get', 'İl_Adı'], il]); }
-            if (ilce !== 'TÜMÜ') { pointMapFilter.push(['==', ['get', 'İlçe_Adı'], ilce]); }
+            if (il !== 'TÜMÜ') { pointMapFilter.push(['==', ['get', 'IL_UPPER'], il]); }
+            if (ilce !== 'TÜMÜ') { pointMapFilter.push(['==', ['get', 'ILCE_UPPER'], ilce]); }
             
             map.setFilter('tasinmazlar-layer', pointMapFilter.length > 1 ? pointMapFilter : null);
 
             // --- PARSEL FİLTRESİ (SADECE İL/İLÇE) ---
             let parselMapFilter = ['all'];
-            if (il !== 'TÜMÜ') { parselMapFilter.push(['==', ['get', 'İl_Adı'], il]); }
-            if (ilce !== 'TÜMÜ') { parselMapFilter.push(['==', ['get', 'İlçe_Adı'], ilce]); }
+            if (il !== 'TÜMÜ') { parselMapFilter.push(['==', ['get', 'IL_UPPER'], il]); }
+            if (ilce !== 'TÜMÜ') { parselMapFilter.push(['==', ['get', 'ILCE_UPPER'], ilce]); }
 
             if (map.getLayer('parseller-layer')) {
-                // Parsel katmanına, 'FiltreGrubu' içermeyen, sadece
-                // coğrafi (İl/İlçe) filtreyi uygula
                 map.setFilter('parseller-layer', parselMapFilter.length > 1 ? parselMapFilter : null);
             }
-            // === GELİŞTİRME 7.2 BİTTİ ===
 
             if (mousePosition && animationEnabled) {
                 updateSpider(mousePosition);
             }
         }
-        
-        // YENİ: Haritayı Türkiye ölçeğine döndür
-        function resetView() {
-            map.flyTo(TURKIYE_VIEW);
-        }
-        
         function updateIlceFilter() {
             const selectedIl = document.getElementById('ilFilter').value;
             const ilceSelect = document.getElementById('ilceFilter');
@@ -427,8 +438,6 @@
                 }
             }
         }
-        
-        // GÜNCELLENDİ: 'Temizle' fonksiyonu artık zoom'u sıfırlıyor ve pop-up'ı kapatıyor
         function clearAll() {
             document.getElementById('tapuInput').value = '';
             document.getElementById('adaInput').value = '';
@@ -437,15 +446,14 @@
             document.getElementById('ilFilter').value = 'TÜMÜ';
             updateIlceFilter(); 
             applyAllFilters(); 
-            
             if (currentPopup) {
                 currentPopup.remove();
                 currentPopup = null;
             }
-            resetView(); // Türkiye ölçeğine geri dön
+            resetView(); 
         }
 
-        // Filtre Dinleyicileri (GÜNCELLENDİ: İl zoom eklendi)
+        // Filtre Dinleyicileri (İl Zoom) (Değişiklik yok)
         document.getElementById('filterGroupSelect').addEventListener('change', applyAllFilters);
         document.getElementById('ilFilter').addEventListener('change', () => {
             updateIlceFilter(); 
@@ -470,7 +478,7 @@
         document.getElementById('clearFiltersButton').addEventListener('click', clearAll);
 
 
-        // Pop-up Fonksiyonu (GÜNCELLENDİ: currentPopup'ı takip ediyor)
+        // Pop-up Fonksiyonu ve Tıklama (Değişiklik yok)
         function showPopup(feature) {
             const coords = feature.geometry.coordinates.slice(); const props = feature.properties; 
             let html = `<div class="popup-container">`;
@@ -485,11 +493,9 @@
             if (props.Yüz_Ölçüm) html += `<strong>Yüz Ölçüm:</strong> ${props.Yüz_Ölçüm} m²<br>`;
             html += `<hr><strong>Konum:</strong><br>${coords[1].toFixed(6)}, ${coords[0].toFixed(6)}`;
             html += `</div>`;
-            
             if (currentPopup) {
                 currentPopup.remove();
             }
-            
             currentPopup = new maplibregl.Popup({ closeOnClick: true, maxWidth: '240px' })
                 .setLngLat(coords)
                 .setHTML(html)
@@ -497,35 +503,35 @@
         }
         map.on('click', 'tasinmazlar-layer', (e) => { showPopup(e.features[0]); });
         
-        // Arama Fonksiyonları (GÜNCELLENDİ: 'clearAll' yerine sadece filtreleri temizliyor)
+        // === GELİŞTİRME 8: ARAMA GÜNCELLENDİ (Büyük/Küçük Harf) ===
         function findAndFly(result) {
             if (result) {
-                // Arama yapınca filtreleri temizle, arama kutularını temizle
-                clearAll(); // 'clearAll' zaten filtreleri ve zoom'u sıfırlıyor.
-                            // Arama kutularını tekrar temizlemeye gerek yok.
-                
-                // Sonra uç ve pop-up aç
+                clearAll(); 
                 map.flyTo({ center: result.geometry.coordinates, zoom: 17, speed: 1.5 });
                 showPopup(result);
             } else {
                 alert('Taşınmaz bulunamadı.\nLütfen tam ve doğru bir değer girin.');
             }
         }
+
         document.getElementById('tapuSearchButton').addEventListener('click', () => {
-            const searchTerm = document.getElementById('tapuInput').value.trim();
+            const searchTerm = document.getElementById('tapuInput').value.trim().toLocaleUpperCase('tr');
             if (!searchTerm) return;
             const result = allPoints.find(feature => {
-                 return String(feature.properties.Tapu_Sicil).trim() === searchTerm;
+                 // Verinin 'Tapu_Sicil' özelliğini de BÜYÜK harfe çevir
+                 return String(feature.properties.Tapu_Sicil).trim().toLocaleUpperCase('tr') === searchTerm;
             });
             findAndFly(result);
         });
+
         document.getElementById('adaParselSearchButton').addEventListener('click', () => {
-            const adaTerm = document.getElementById('adaInput').value.trim();
-            const parselTerm = document.getElementById('parselInput').value.trim();
+            const adaTerm = document.getElementById('adaInput').value.trim().toLocaleUpperCase('tr');
+            const parselTerm = document.getElementById('parselInput').value.trim().toLocaleUpperCase('tr');
             if (!adaTerm || !parselTerm) { alert('Lütfen hem Ada hem de Parsel numarasını girin.'); return; }
             const result = allPoints.find(feature => {
-                const propAda = String(feature.properties.Ada).trim();
-                const propParsel = String(feature.properties.Parsel).trim();
+                // Verinin 'Ada' ve 'Parsel' özelliklerini de BÜYÜK harfe çevir
+                const propAda = String(feature.properties.Ada).trim().toLocaleUpperCase('tr');
+                const propParsel = String(feature.properties.Parsel).trim().toLocaleUpperCase('tr');
                 return propAda === adaTerm && propParsel === parselTerm;
             });
             findAndFly(result);
