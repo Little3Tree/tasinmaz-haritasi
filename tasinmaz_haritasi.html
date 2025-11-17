@@ -10,12 +10,11 @@
         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
-        /* === GELİŞTİRME 1: HEADER GÜNCELLENDİ === */
+        /* SOL ÜST PANEL (Başlık) */
         .header { 
             position: absolute; 
             top: 20px; 
             left: 20px; 
-            /* Daha şeffaf, daha az padding, daha geniş */
             background: rgba(255, 255, 255, 0.85); 
             padding: 10px 15px; 
             border-radius: 8px; 
@@ -24,12 +23,10 @@
             max-width: 500px; 
         }
         .header h1 { margin: 0 0 5px 0; font-size: 20px; color: #e74c3c; }
-        .header .day { padding: 3px 8px; font-size: 10px; margin-bottom: 8px; }
+        .header .day { padding: 3px 8px; font-size: 10px; margin-bottom: 8px; background: #e74c3c; color: white; border-radius: 4px; display: inline-block; font-weight: bold; }
         .header p { margin: 4px 0; font-size: 13px; color: #444; line-height: 1.4; }
-        /* === BİTTİ === */
 
-
-        /* === GELİŞTİRME 3: STATS SAĞ ÜSTE ALINDI === */
+        /* SAĞ ÜST PANEL (İstatistik) */
         .stats { 
             position: absolute; 
             top: 20px; 
@@ -45,16 +42,14 @@
         .stats-row { display: flex; justify-content: space-between; margin: 4px 0; gap: 15px; }
         .stats-label { color: #555; font-weight: 500; }
         .stats-value { color: #e74c3c; font-weight: bold; font-size: 15px; }
-        /* === BİTTİ === */
         
-
-        /* === GELİŞTİRME 2 & 3: LEJANT SAĞ ALTA ALINDI VE YAN YANA === */
+        /* SAĞ ALT PANEL (Lejant) - DÜZELTME */
         .legend-container {
             position: absolute;
             bottom: 20px;
             right: 20px;
             z-index: 1;
-            display: flex; /* İki lejant kutusunu yan yana koy */
+            display: flex; /* İki kutuyu yan yana koy */
             gap: 10px;
         }
         .legend-box {
@@ -69,19 +64,25 @@
         .legend-color-circle { width: 15px; height: 15px; margin-right: 10px; border-radius: 50%; border: 1px solid #777; }
         .legend-color-line { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
         .legend-label { color: #666; }
-        /* === BİTTİ === */
 
-
-        /* === GELİŞTİRME 3: KONTROL PANELİ SOLA ALINDI (AÇILIR/KAPANIR) === */
+        /* SOL TARAF PANEL (Kontroller) - DÜZELTME */
         .controls-container {
             position: absolute; 
-            top: 170px; /* Başlığın bittiği yerin altı (yaklaşık) */
+            top: 170px; /* Başlığın altı */
             left: 20px; 
-            z-index: 2; /* Diğer panellerin üstünde */
+            z-index: 2; /* Üstte */
             max-width: 240px; 
             width: 100%;
         }
         
+        /* 'Görünümü Sıfırla' Butonu */
+        #resetViewButton {
+            background-color: #3498DB;
+            margin-bottom: 10px; 
+            width: 240px; /* Panelle aynı genişlikte */
+        }
+        #resetViewButton:hover { background-color: #2980b9; }
+
         /* Tıklanabilir Başlık */
         .controls-toggle {
             padding: 10px 15px;
@@ -89,25 +90,18 @@
             color: white;
             font-weight: bold;
             cursor: pointer;
-            border-radius: 8px; /* Başlangıçta tüm kenarlar yuvarlak */
+            border-radius: 8px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             display: flex;
             justify-content: space-between;
             align-items: center;
             transition: border-radius 0.3s ease-in-out;
         }
-        .controls-toggle span { /* Ok ikonu */
-            transition: transform 0.3s;
-            transform-origin: center;
-        }
-        
-        /* Açıkken: Başlığın alt kenarları düz */
+        .controls-toggle span { transition: transform 0.3s; transform-origin: center; }
         .controls-toggle:not(.collapsed-header) {
             border-bottom-left-radius: 0;
             border-bottom-right-radius: 0;
         }
-        
-        /* Kapalıyken: Ok ikonu dönsün */
         .controls-toggle.collapsed-header span {
             transform: rotate(-90deg);
         }
@@ -116,15 +110,13 @@
         .controls-content {
             background: rgba(255, 255, 255, 0.95);
             padding: 15px;
-            max-height: 70vh; /* Yüksekliği sınırla */
+            max-height: 70vh; 
             overflow-y: auto;
             transition: max-height 0.3s ease-out, padding 0.3s ease-out, box-shadow 0.3s ease-out, visibility 0.3s;
             border-radius: 0 0 8px 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             visibility: visible;
         }
-        
-        /* Kapalı durum */
         .controls-content.collapsed {
             max-height: 0;
             padding-top: 0;
@@ -133,17 +125,7 @@
             box-shadow: none;
             visibility: hidden;
         }
-        /* === BİTTİ === */
-        
-        /* === GELİŞTİRME 4: HOME BUTONU STİLİ === */
-        #resetViewButton {
-            background-color: #3498DB;
-            margin-bottom: 10px; /* Kontrol panelinden ayır */
-        }
-        #resetViewButton:hover {
-            background-color: #2980b9;
-        }
-        /* === BİTTİ === */
+        /* === TÜM YERLEŞİM DÜZELTMELERİ BİTTİ === */
 
         /* Diğer stiller (Değişiklik yok) */
         .control-group { margin: 10px 0; }
@@ -183,9 +165,9 @@
         </div>
     </div>
 
-    <div class="left-panel-container">
+    <div class="controls-container"> 
         <div class="header">
-            <div class="day">AŞAMA 9</div>
+            <div class="day">AŞAMA 10</div>
             <h1>Taşınmaz Ağı Haritası</h1>
             <p>Kurumun ~7,000 taşınmaz noktası arasındaki bağlantı ağı.</p>
             <p style="font-size: 11px; color: #666; margin-top: 8px; border-top: 1px solid #ccc; padding-top: 8px;">
@@ -321,14 +303,18 @@
                 data.features.forEach(feature => {
                     const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
                     feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
+                    
                     const il = feature.properties['İl_Adı'];
                     const ilce = feature.properties['İlçe_Adı'];
                     const coords = feature.geometry.coordinates;
+                    
                     if (il) {
                         const ilUpper = il.trim().toLocaleUpperCase('tr');
                         const ilceUpper = ilce ? ilce.trim().toLocaleUpperCase('tr') : null;
+                        
                         feature.properties.IL_UPPER = ilUpper;
                         feature.properties.ILCE_UPPER = ilceUpper;
+
                         iller.add(ilUpper); 
                         if (ilceUpper) {
                             if (!ilceMap.has(ilUpper)) { ilceMap.set(ilUpper, new Set()); }
@@ -344,6 +330,7 @@
                         }
                     }
                 });
+                
                 const sortedIller = [...iller].sort((a, b) => a.localeCompare(b, 'tr'));
                 sortedIller.forEach(il => {
                     const option = document.createElement('option');
@@ -374,11 +361,17 @@
                         }
                     });
 
-                    // Parsel Yükleme (GÜNCELLENDİ)
-                    fetch('parseller.geojson') // 'parseller_simple.geojson' DEĞİL, SİZİNKİ YÜKLENDİ!
-                        .then(response => response.json())
+                    // === DÜZELTME 2: PARSEL YÜKLEME GÜNCELLENDİ ===
+                    // Artık 'parseller_simple.geojson' dosyasını arayacak
+                    fetch('parseller_simple.geojson') 
+                        .then(response => {
+                            if (!response.ok) { // Hata varsa (404 vb)
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
                         .then(parselData => {
-                            console.log(`Loaded ${parselData.features.length} parcels.`);
+                            console.log(`Loaded ${parselData.features.length} simplified parcels.`);
                             
                             // Parsellere de BÜYÜK harf İl/İlçe ekle
                             parselData.features.forEach(feature => {
@@ -401,7 +394,7 @@
                                 id: 'parseller-layer',
                                 type: 'fill',
                                 source: 'parseller-source',
-                                minzoom: 13, // Zoom 13+ olunca göster
+                                minzoom: 13, // Sadece yakınlaşınca göster
                                 paint: {
                                     'fill-color': '#95A5A6', 
                                     'fill-opacity': 0.3,
@@ -410,8 +403,9 @@
                             }, 'tasinmazlar-layer'); // Noktaların altında çiz
                         
                         }).catch(err => {
-                            console.warn('Parsel verisi yüklenemedi (parseller.geojson bulunamadı mı?):', err);
+                            console.warn('Parsel verisi yüklenemedi. (parseller_simple.geojson dosyasını ArcGIS Proda oluşturdunuz mu?):', err);
                         });
+                    // === DÜZELTME 2 BİTTİ ===
 
                     map.addSource('spider-lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
                     map.addLayer({ id: 'spider-lines-layer', type: 'line', source: 'spider-lines', paint: { 'line-width': ['get', 'width'], 'line-color': ['get', 'color'], 'line-opacity': ['get', 'opacity'] } });
@@ -622,14 +616,8 @@
         // Arama (Büyük/Küçük Harf)
         function findAndFly(result) {
             if (result) {
-                // Arama yapınca filtreleri temizle (ama zoom'u değil)
-                document.getElementById('tapuInput').value = '';
-                document.getElementById('adaInput').value = '';
-                document.getElementById('parselInput').value = '';
-                document.getElementById('filterGroupSelect').value = 'TÜMÜ';
-                document.getElementById('ilFilter').value = 'TÜMÜ';
-                updateIlceFilter();
-                applyAllFilters();
+                // Arama yapınca filtreleri ve zoom'u sıfırla
+                clearAll(); 
                 
                 // Sonra uç ve pop-up aç
                 map.flyTo({ center: result.geometry.coordinates, zoom: 17, speed: 1.5 });
