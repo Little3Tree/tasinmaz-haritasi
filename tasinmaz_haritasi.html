@@ -10,21 +10,48 @@
         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
-        /* SOL ÜST PANEL (Başlık) */
+        /* === DÜZELTME: SOL PANEL YERLEŞİMİ === */
+        /* Tüm sol panelleri taşıyan ana kutu */
+        .left-panel-container {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 2;
+            max-width: 240px;
+            width: 100%;
+            display: flex;
+            flex-direction: column; /* İçindekileri alt alta diz */
+            gap: 10px; /* Paneller arası 10px boşluk bırak */
+        }
+
+        /* Başlık Paneli (Artık absolute değil) */
         .header { 
-            position: absolute; 
-            top: 20px; 
-            left: 20px; 
             background: rgba(255, 255, 255, 0.85); 
             padding: 10px 15px; 
             border-radius: 8px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
-            z-index: 1; 
-            max-width: 500px; 
+            width: 100%;
+            box-sizing: border-box; /* Padding genişliği etkilemesin */
         }
         .header h1 { margin: 0 0 5px 0; font-size: 20px; color: #e74c3c; }
         .header .day { padding: 3px 8px; font-size: 10px; margin-bottom: 8px; background: #e74c3c; color: white; border-radius: 4px; display: inline-block; font-weight: bold; }
         .header p { margin: 4px 0; font-size: 13px; color: #444; line-height: 1.4; }
+
+        /* Görünümü Sıfırla Butonu */
+        #resetViewButton {
+            background-color: #3498DB;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #resetViewButton:hover { background-color: #2980b9; }
+
+        /* Kontrol Paneli (Artık absolute değil) */
+        .controls { 
+            width: 100%;
+            box-sizing: border-box;
+        }
+        /* === DÜZELTME BİTTİ === */
+
 
         /* SAĞ ÜST PANEL (İstatistik) */
         .stats { 
@@ -43,7 +70,7 @@
         .stats-label { color: #555; font-weight: 500; }
         .stats-value { color: #e74c3c; font-weight: bold; font-size: 15px; }
         
-        /* SAĞ ALT PANEL (Lejant) - DÜZELTME */
+        /* SAĞ ALT PANEL (Lejant) - YAN YANA */
         .legend-container {
             position: absolute;
             bottom: 20px;
@@ -65,25 +92,7 @@
         .legend-color-line { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
         .legend-label { color: #666; }
 
-        /* SOL TARAF PANEL (Kontroller) - DÜZELTME */
-        .controls-container {
-            position: absolute; 
-            top: 170px; /* Başlığın altı */
-            left: 20px; 
-            z-index: 2; /* Üstte */
-            max-width: 240px; 
-            width: 100%;
-        }
-        
-        /* 'Görünümü Sıfırla' Butonu */
-        #resetViewButton {
-            background-color: #3498DB;
-            margin-bottom: 10px; 
-            width: 240px; /* Panelle aynı genişlikte */
-        }
-        #resetViewButton:hover { background-color: #2980b9; }
-
-        /* Tıklanabilir Başlık */
+        /* Açılır/Kapanır Panel Stilleri (Değişiklik yok) */
         .controls-toggle {
             padding: 10px 15px;
             background: #e74c3c;
@@ -105,8 +114,6 @@
         .controls-toggle.collapsed-header span {
             transform: rotate(-90deg);
         }
-
-        /* Açılır/Kapanır İçerik Alanı */
         .controls-content {
             background: rgba(255, 255, 255, 0.95);
             padding: 15px;
@@ -125,8 +132,7 @@
             box-shadow: none;
             visibility: hidden;
         }
-        /* === TÜM YERLEŞİM DÜZELTMELERİ BİTTİ === */
-
+        
         /* Diğer stiller (Değişiklik yok) */
         .control-group { margin: 10px 0; }
         .control-label { font-size: 12px; color: #666; margin-bottom: 5px; display: block; }
@@ -165,7 +171,7 @@
         </div>
     </div>
 
-    <div class="controls-container"> 
+    <div class="left-panel-container"> 
         <div class="header">
             <div class="day">AŞAMA 10</div>
             <h1>Taşınmaz Ağı Haritası</h1>
@@ -175,7 +181,7 @@
             </p>
         </div>
 
-        <button id="resetViewButton" style="width: 240px; margin-top: 10px;">Görünümü Sıfırla (Türkiye)</button>
+        <button id="resetViewButton">Görünümü Sıfırla (Türkiye)</button>
 
         <div class="controls">
             <div class="controls-toggle" id="controlsToggle">
@@ -303,18 +309,14 @@
                 data.features.forEach(feature => {
                     const nitelik = feature.properties['Kullanım_Niteliği_Tanımı'];
                     feature.properties.FiltreGrubu = getFiltreGrubu(nitelik);
-                    
                     const il = feature.properties['İl_Adı'];
                     const ilce = feature.properties['İlçe_Adı'];
                     const coords = feature.geometry.coordinates;
-                    
                     if (il) {
                         const ilUpper = il.trim().toLocaleUpperCase('tr');
                         const ilceUpper = ilce ? ilce.trim().toLocaleUpperCase('tr') : null;
-                        
                         feature.properties.IL_UPPER = ilUpper;
                         feature.properties.ILCE_UPPER = ilceUpper;
-
                         iller.add(ilUpper); 
                         if (ilceUpper) {
                             if (!ilceMap.has(ilUpper)) { ilceMap.set(ilUpper, new Set()); }
@@ -330,7 +332,6 @@
                         }
                     }
                 });
-                
                 const sortedIller = [...iller].sort((a, b) => a.localeCompare(b, 'tr'));
                 sortedIller.forEach(il => {
                     const option = document.createElement('option');
