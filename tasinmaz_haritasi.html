@@ -10,9 +10,7 @@
         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
-        /* === DÜZELTME: KOYU TEMA / ŞEFFAF PANELLER === */
-
-        /* Sol Ana Kutu */
+        /* SOL PANEL YERLEŞİMİ */
         .left-panel-container {
             position: absolute;
             top: 20px;
@@ -55,7 +53,7 @@
             box-sizing: border-box;
         }
         
-        /* Sağ Üst Panel (Koyu Tema) */
+        /* SAĞ ÜST PANEL (İstatistik) */
         .stats { 
             position: absolute; 
             top: 20px; 
@@ -72,7 +70,7 @@
         .stats-label { color: #ccc; font-weight: 500; }
         .stats-value { color: #e74c3c; font-weight: bold; font-size: 15px; }
         
-        /* Sağ Alt Panel (Koyu Tema) */
+        /* SAĞ ALT PANEL (Koyu Tema) */
         .legend-container {
             position: absolute;
             bottom: 20px;
@@ -92,7 +90,6 @@
         .legend-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #f5f5f5; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
         .legend-label { color: #ccc; }
         
-        /* Lejant Ayırıcı (Açık renk) */
         .legend-box h3:nth-of-type(2) {
             margin-top: 15px;
             padding-top: 10px;
@@ -298,8 +295,16 @@
             container: 'map',
             style: {
                 version: 8,
-                sources: { 'carto-light': { type: 'raster', tiles: ['https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'], tileSize: 256, attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' } },
-                layers: [{ id: 'carto-light-layer', type: 'raster', source: 'carto-light', minzoom: 0, maxzoom: 22 }]
+                // === KOYU TEMA ALT HARİTA ===
+                // sources: { 'carto-light': { type: 'raster', tiles: ['https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'], ... } },
+                sources: { 'carto-dark': { 
+                    type: 'raster', 
+                    tiles: ['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'], 
+                    tileSize: 256, 
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' 
+                } },
+                layers: [{ id: 'carto-dark-layer', type: 'raster', source: 'carto-dark', minzoom: 0, maxzoom: 22 }]
+                // layers: [{ id: 'carto-light-layer', type: 'raster', source: 'carto-light', ... }]
             },
             center: TURKIYE_VIEW.center, 
             zoom: TURKIYE_VIEW.zoom,
@@ -628,7 +633,8 @@
                         map.flyTo({ center: [bbox[0], bbox[1]], zoom: 15 });
                     } else {
                         map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-                            padding: 50 
+                            // DÜZELTME: Padding kaldırıldı
+                            // padding: 50 
                         });
                     }
                 }
@@ -651,7 +657,8 @@
                         map.flyTo({ center: [bbox[0], bbox[1]], zoom: 17 }); 
                     } else {
                         map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-                            padding: 80 
+                            // DÜZELTME: Padding kaldırıldı
+                            // padding: 80 
                         });
                     }
                 }
@@ -659,7 +666,10 @@
                 // İlçe "TÜMÜ"ne döndü, İLE geri zoom yap
                 const bbox = ilBboxMap.get(selectedIl);
                 if (bbox) {
-                    map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], { padding: 50 });
+                    map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], { 
+                        // DÜZELTME: Padding kaldırıldı
+                        // padding: 50 
+                    });
                 }
             } else {
                 resetView();
@@ -690,6 +700,7 @@
                 // Bu bir PARSEL pop-up'ı
                 html += `<div class="popup-title">Parsel Bilgisi</div>`;
                 if (props.İl_Adı) html += `<strong>İl/İlçe:</strong> ${props.İl_Adı} / ${props.İlçe_Adı}<br>`;
+                // ÖNEMLİ: Parsel dosyanızda bu sütunlar varsa görünür
                 if (props.Ada) html += `<strong>Ada/Parsel:</strong> ${props.Ada} / ${props.Parsel}<br>`;
                 if (props.Mahalle) html += `<strong>Mahalle:</strong> ${props.Mahalle}<br>`;
                 
