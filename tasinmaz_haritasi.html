@@ -10,7 +10,7 @@
         body { margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         #map { position: absolute; top: 0; bottom: 0; width: 100%; }
 
-        /* SOL PANEL YERLEŞİMİ */
+        /* === SOL PANEL YERLEŞİMİ (BEYAZ TEMA) === */
         .left-panel-container {
             position: absolute;
             top: 20px;
@@ -19,7 +19,7 @@
             max-width: 240px;
             width: 100%;
             display: flex;
-            flex-direction: column;
+            flex-direction: column; 
             gap: 10px; 
         }
         .header { 
@@ -34,36 +34,99 @@
         .header .day { padding: 3px 8px; font-size: 10px; margin-bottom: 8px; background: #e74c3c; color: white; border-radius: 4px; display: inline-block; font-weight: bold; }
         .header p { margin: 4px 0; font-size: 13px; color: #444; line-height: 1.4; }
 
-        #resetViewButton { background-color: #3498DB; width: 100%; box-sizing: border-box; }
+        #resetViewButton {
+            background-color: #3498DB;
+            width: 100%;
+            box-sizing: border-box;
+        }
         #resetViewButton:hover { background-color: #2980b9; }
 
-        .controls { width: 100%; box-sizing: border-box; }
+        .controls { 
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-        /* SAĞ ÜST PANEL (İstatistik) */
-        .stats { position: absolute; top: 20px; right: 20px; background: rgba(255, 255, 255, 0.9); padding: 10px 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1; font-size: 13px; min-width: 180px; }
+        /* SAĞ ÜST PANEL (İstatistik - BEYAZ TEMA) */
+        .stats { 
+            position: absolute; 
+            top: 20px; 
+            right: 20px; 
+            background: rgba(255, 255, 255, 0.9); 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2); 
+            z-index: 1; 
+            font-size: 13px; 
+            min-width: 180px;
+        }
         .stats-row { display: flex; justify-content: space-between; margin: 4px 0; gap: 15px; }
         .stats-label { color: #555; font-weight: 500; }
         .stats-value { color: #e74c3c; font-weight: bold; font-size: 15px; }
         
-        /* SAĞ ALT PANEL (Lejant) */
-        .legend-container { position: absolute; bottom: 20px; right: 20px; z-index: 1; display: flex; gap: 10px; }
-        .legend-box { background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); font-size: 13px; }
+        /* SAĞ ALT PANEL (Lejant - BEYAZ TEMA) */
+        .legend-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1;
+            display: flex; 
+            gap: 10px;
+        }
+        .legend-box {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            font-size: 13px;
+        }
         .legend-box h3 { margin: 0 0 10px 0; font-size: 14px; color: #333; border-bottom: 2px solid #e74c3c; padding-bottom: 5px; }
-        .legend-box h3:nth-of-type(2) { margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; }
         .legend-item { display: flex; align-items: center; margin: 8px 0; }
         .legend-color-circle { width: 15px; height: 15px; margin-right: 10px; border-radius: 50%; border: 1px solid #777; }
         .legend-color-line { width: 30px; height: 3px; margin-right: 10px; border-radius: 2px; }
         .legend-label { color: #666; }
 
         /* Açılır/Kapanır Panel Stilleri */
-        .controls-toggle { padding: 10px 15px; background: #e74c3c; color: white; font-weight: bold; cursor: pointer; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; transition: border-radius 0.3s ease-in-out; }
+        .controls-toggle {
+            padding: 10px 15px;
+            background: #e74c3c;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-radius 0.3s ease-in-out;
+        }
         .controls-toggle span { transition: transform 0.3s; transform-origin: center; }
-        .controls-toggle:not(.collapsed-header) { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-        .controls-toggle.collapsed-header span { transform: rotate(-90deg); }
-        .controls-content { background: rgba(255, 255, 255, 0.95); padding: 15px; max-height: 70vh; overflow-y: auto; transition: max-height 0.3s ease-out, padding 0.3s ease-out, box-shadow 0.3s ease-out, visibility 0.3s; border-radius: 0 0 8px 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); visibility: visible; }
-        .controls-content.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; overflow: hidden; box-shadow: none; visibility: hidden; }
+        .controls-toggle:not(.collapsed-header) {
+            border-bottom-left-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .controls-toggle.collapsed-header span {
+            transform: rotate(-90deg);
+        }
+        .controls-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            max-height: 70vh; 
+            overflow-y: auto;
+            transition: max-height 0.3s ease-out, padding 0.3s ease-out, box-shadow 0.3s ease-out, visibility 0.3s;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            visibility: visible;
+        }
+        .controls-content.collapsed {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            overflow: hidden;
+            box-shadow: none;
+            visibility: hidden;
+        }
         
-        /* Diğer stiller */
+        /* Diğer stiller (BEYAZ TEMA) */
         .control-group { margin: 10px 0; }
         .control-label { font-size: 12px; color: #666; margin-bottom: 5px; display: block; }
         input[type="range"] { width: 100%; }
@@ -101,7 +164,7 @@
 
     <div class="left-panel-container"> 
         <div class="header">
-            <div class="day">AŞAMA 12</div>
+            <div class="day">AŞAMA 10</div>
             <h1>Taşınmaz Ağı Haritası</h1>
             <p>Kurumun ~7,000 taşınmaz noktası arasındaki bağlantı ağı.</p>
             <p style="font-size: 11px; color: #666; margin-top: 8px; border-top: 1px solid #ccc; padding-top: 8px;">
@@ -117,14 +180,6 @@
                 <span id="toggleIcon">▼</span>
             </div>
             <div class="controls-content" id="controlsContent">
-                <div class="control-group">
-                    <label class="control-label">Altlık Harita Seçimi</label>
-                    <select id="mapStyleSelect">
-                        <option value="LIGHT" selected>Açık Tema</option>
-                        <option value="DARK">Koyu Tema</option>
-                        <option value="STREETS">Sokak Haritası</option>
-                    </select>
-                </div>
                 <div class="control-group">
                     <label class="control-label">Tapu Sicil ile Ara</label>
                     <div class="search-container">
@@ -204,25 +259,28 @@
             return 'DİĞER';
         }
         
-        // GLOBAL DEĞİŞKENLER (Değişiklik yok)
-        const TURKIYE_VIEW = { center: [35.0000, 39.0000], zoom: 6 }; // Doğru coğrafi merkez
+        // === DÜZELTME: TÜRKİYE ZOOM'U PADDING'E GÖRE DÜZELTİLDİ ===
+        // Bu, haritayı sol panele göre (padding) kaydırılmış alanda ortalar.
+        const TURKIYE_VIEW = { center: [35.0, 39.0], zoom: 5.5 }; 
         let currentPopup = null; 
         let ilceMap = new Map(); 
         let ilBboxMap = new Map(); 
         let ilceBboxMap = new Map();
 
-        // === GELİŞTİRME 1: YENİ HARİTA STİLLERİ SABİTİ ===
-        const MAP_STYLES = {
-            LIGHT: { name: 'Açık Tema', url: 'https://a.basemaps.cartocdn.com/gl/voyager-gl-style/style.json' },
-            DARK: { name: 'Koyu Tema', url: 'https://a.basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json' },
-            STREETS: { name: 'Sokak Haritası', url: 'https://demotiles.maplibre.org/style.json' }
-        };
-        // === BİTTİ ===
-
         // Initialize map
         const map = new maplibregl.Map({
             container: 'map',
-            style: MAP_STYLES.LIGHT.url, // Başlangıçta Açık Tema
+            style: {
+                version: 8,
+                // === AÇIK TEMA ALT HARİTA ===
+                sources: { 'carto-light': { 
+                    type: 'raster', 
+                    tiles: ['https://a.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'], 
+                    tileSize: 256, 
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>' 
+                } },
+                layers: [{ id: 'carto-light-layer', type: 'raster', source: 'carto-light', minzoom: 0, maxzoom: 22 }]
+            },
             center: TURKIYE_VIEW.center, 
             zoom: TURKIYE_VIEW.zoom,
             pitch: 0
@@ -234,45 +292,6 @@
         let animationEnabled = true;
         let maxDistance = 3000;
         let maxConnections = 50;
-
-
-        // === YENİ FONKSİYON: KATMANLARI YENİDEN EKLE ===
-        // Altlık harita değiştiğinde bu fonksiyon çağrılır.
-        function addMapLayers(map, data, parselData) {
-            // 1. Mevcut kaynakları/katmanları kontrol et ve kaldır (opsiyonel)
-            // if (map.getLayer('tasinmazlar-layer')) { map.removeLayer('tasinmazlar-layer'); }
-            // ... (hata vermemek için sadece yeniden ekliyoruz)
-
-            // 2. Nokta Verisini Ekle
-            map.addSource('tasinmazlar', { type: 'geojson', data: data });
-            map.addLayer({
-                id: 'tasinmazlar-layer', type: 'circle', source: 'tasinmazlar',
-                paint: {
-                    'circle-color': ['match', ['get', 'FiltreGrubu'], 'KONUT', '#E74C3C', 'ARSA', '#2ECC71', 'TARLA', '#F39C12', 'İŞYERİ', '#3498DB', 'DİĞER', '#9B59B6', '#95A5A6'],
-                    'circle-radius': 4, 'circle-opacity': 0.8, 'circle-stroke-width': 1, 'circle-stroke-color': '#ffffff'
-                }
-            });
-
-            // 3. Parsel Verisini Ekle
-            if (parselData) {
-                map.addSource('parseller-source', { type: 'geojson', data: parselData });
-                map.addLayer({
-                    id: 'parseller-layer', type: 'fill', source: 'parseller-source', minzoom: 13,
-                    paint: { 'fill-color': '#95A5A6', 'fill-opacity': 0.3, 'fill-outline-color': '#000000' }
-                }, 'tasinmazlar-layer'); 
-            }
-
-            // 4. Örümcek Ağını Ekle
-            map.addSource('spider-lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-            map.addLayer({ id: 'spider-lines-layer', type: 'line', source: 'spider-lines', paint: { 'line-width': ['get', 'width'], 'line-color': ['get', 'color'], 'line-opacity': ['get', 'opacity'] } });
-            
-            // 5. Mouse Point Ekle
-            map.addSource('mouse-point', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-            map.addLayer({ id: 'mouse-point-layer', type: 'circle', source: 'mouse-point', paint: { 'circle-radius': 8, 'circle-color': '#e74c3c', 'circle-opacity': 0.8, 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff', 'circle-stroke-opacity': 1 } });
-            
-            // Son adım: Filtreleri ve örümcek ağını yeniden uygula
-            applyAllFilters();
-        }
 
         // Veri Yükleme (Büyük/Küçük Harf + İlçe BBOX)
         fetch('kurum_tasinmazlari.geojson')
@@ -289,20 +308,25 @@
                     if (il) {
                         const ilUpper = il.trim().toLocaleUpperCase('tr');
                         const ilceUpper = ilce ? ilce.trim().toLocaleUpperCase('tr') : null;
-                        feature.properties.IL_UPPER = ilUpper; feature.properties.ILCE_UPPER = ilceUpper;
+                        feature.properties.IL_UPPER = ilUpper;
+                        feature.properties.ILCE_UPPER = ilceUpper;
                         iller.add(ilUpper); 
                         if (ilceUpper) {
                             if (!ilceMap.has(ilUpper)) { ilceMap.set(ilUpper, new Set()); }
                             ilceMap.get(ilUpper).add(ilceUpper);
                             const ilceKey = `${ilUpper}_${ilceUpper}`;
-                            if (!ilceBboxMap.has(ilceKey)) { ilceBboxMap.set(ilceKey, [coords[0], coords[1], coords[0], coords[1]]); } else {
+                            if (!ilceBboxMap.has(ilceKey)) {
+                                ilceBboxMap.set(ilceKey, [coords[0], coords[1], coords[0], coords[1]]);
+                            } else {
                                 const bbox = ilceBboxMap.get(ilceKey);
                                 bbox[0] = Math.min(bbox[0], coords[0]); bbox[1] = Math.min(bbox[1], coords[1]);
                                 bbox[2] = Math.max(bbox[2], coords[0]); bbox[3] = Math.max(bbox[3], coords[1]);
                                 ilceBboxMap.set(ilceKey, bbox);
                             }
                         }
-                        if (!ilBboxMap.has(ilUpper)) { ilBboxMap.set(ilUpper, [coords[0], coords[1], coords[0], coords[1]]); } else {
+                        if (!ilBboxMap.has(ilUpper)) {
+                            ilBboxMap.set(ilUpper, [coords[0], coords[1], coords[0], coords[1]]);
+                        } else {
                             const bbox = ilBboxMap.get(ilUpper);
                             bbox[0] = Math.min(bbox[0], coords[0]); bbox[1] = Math.min(bbox[1], coords[1]);
                             bbox[2] = Math.max(bbox[2], coords[0]); bbox[3] = Math.max(bbox[3], coords[1]);
@@ -312,7 +336,8 @@
                 });
                 const sortedIller = [...iller].sort((a, b) => a.localeCompare(b, 'tr'));
                 sortedIller.forEach(il => {
-                    const option = document.createElement('option'); option.value = il; option.textContent = il;
+                    const option = document.createElement('option');
+                    option.value = il; option.textContent = il;
                     ilSelect.appendChild(option);
                 });
                 allPoints = data.features;
@@ -321,31 +346,69 @@
                 
                 updateGrupFilter(); // Başlangıçta tüm grupları yükle
 
-                // === PARSEL VERİSİNİ AYRI YÜKLE VE HARİTAYA EKLE ===
-                let parselDataGlobal = null;
-
-                fetch('parseller_simple.geojson') 
-                    .then(response => { if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); } return response.json(); })
-                    .then(parselData => {
-                        console.log(`Loaded ${parselData.features.length} simplified parcels.`);
-                        parselData.features.forEach(feature => {
-                            const il = feature.properties['İl_Adı'];
-                            const ilce = feature.properties['İlçe_Adı'];
-                            if (il) { feature.properties.IL_UPPER = il.trim().toLocaleUpperCase('tr'); }
-                            if (ilce) { feature.properties.ILCE_UPPER = ilce.trim().toLocaleUpperCase('tr'); }
-                        });
-                        parselDataGlobal = parselData; // Global değişkene ata
+                map.on('load', () => {
                     
-                    }).catch(err => {
-                        console.warn('Parsel verisi yüklenemedi (parseller_simple.geojson bulunamadı mı?):', err);
+                    // === DÜZELTME: HARİTA ÇERÇEVESİ (PADDING) EKLENDİ ===
+                    map.setPadding({ left: 280 });
+                    
+                    map.addSource('tasinmazlar', { type: 'geojson', data: data });
+
+                    // Renklendirme
+                    map.addLayer({
+                        id: 'tasinmazlar-layer', 
+                        type: 'circle', 
+                        source: 'tasinmazlar',
+                        paint: {
+                            'circle-color': [
+                                'match',
+                                ['get', 'FiltreGrubu'],
+                                'KONUT', '#E74C3C', 'ARSA', '#2ECC71', 'TARLA', '#F39C12',
+                                'İŞYERİ', '#3498DB', 'DİĞER', '#9B59B6', '#95A5A6'
+                            ],
+                            'circle-radius': 4, 'circle-opacity': 0.8,
+                            'circle-stroke-width': 1, 'circle-stroke-color': '#ffffff'
+                        }
                     });
 
-                map.on('load', () => {
-                    // map.setPadding({ left: 280 }); // ARTIK YOK, ZATEN ÇÖZÜLDÜ
-                    addMapLayers(map, data, parselDataGlobal);
-                });
+                    // Parsel Yükleme ('parseller_simple.geojson' aranıyor)
+                    fetch('parseller_simple.geojson') 
+                        .then(response => {
+                            if (!response.ok) { throw new Error(`HTTP error! status: ${response.status}`); }
+                            return response.json();
+                        })
+                        .then(parselData => {
+                            console.log(`Loaded ${parselData.features.length} simplified parcels.`);
+                            
+                            parselData.features.forEach(feature => {
+                                const il = feature.properties['İl_Adı'];
+                                const ilce = feature.properties['İlçe_Adı'];
+                                if (il) { feature.properties.IL_UPPER = il.trim().toLocaleUpperCase('tr'); }
+                                if (ilce) { feature.properties.ILCE_UPPER = ilce.trim().toLocaleUpperCase('tr'); }
+                            });
 
-                // === ALT KISIM: DİNLEYİCİLER (Değişiklik yok) ===
+                            map.addSource('parseller-source', { type: 'geojson', data: parselData });
+                            
+                            map.addLayer({
+                                id: 'parseller-layer',
+                                type: 'fill',
+                                source: 'parseller-source',
+                                minzoom: 13, 
+                                paint: {
+                                    'fill-color': '#95A5A6', 
+                                    'fill-opacity': 0.3,
+                                    'fill-outline-color': '#000000'
+                                }
+                            }, 'tasinmazlar-layer'); 
+                        
+                        }).catch(err => {
+                            console.warn('Parsel verisi yüklenemedi. (parseller_simple.geojson dosyasını ArcGIS Proda oluşturdunuz mu?):', err);
+                        });
+
+                    map.addSource('spider-lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+                    map.addLayer({ id: 'spider-lines-layer', type: 'line', source: 'spider-lines', paint: { 'line-width': ['get', 'width'], 'line-color': ['get', 'color'], 'line-opacity': ['get', 'opacity'] } });
+                    map.addSource('mouse-point', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
+                    map.addLayer({ id: 'mouse-point-layer', type: 'circle', source: 'mouse-point', paint: { 'circle-radius': 8, 'circle-color': '#e74c3c', 'circle-opacity': 0.8, 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff', 'circle-stroke-opacity': 1 } });
+                });
             });
 
         // calculateDistance ve getColorForDistance (Değişiklik yok)
@@ -381,40 +444,37 @@
             map.getSource('mouse-point').setData({ type: 'FeatureCollection', features: [{ type: 'Feature', geometry: { type: 'Point', coordinates: [mouseLon, mouseLat] } }] });
         }
 
-        // Altlık Harita Değiştiğinde Katmanları Yeniden Ekleyen Fonksiyon
-        function addMapLayers(map, data, parselData) {
-            // 1. Mevcut tüm kaynakları/katmanları haritadan kaldır
-            // (setStyle komutunun callback'inde zaten temizlenmiş olacak, ancak bu bir güvenlik kontrolüdür)
-            
-            // 2. Nokta Verisini Ekle
-            map.addSource('tasinmazlar', { type: 'geojson', data: data });
-            map.addLayer({
-                id: 'tasinmazlar-layer', type: 'circle', source: 'tasinmazlar',
-                paint: {
-                    'circle-color': ['match', ['get', 'FiltreGrubu'], 'KONUT', '#E74C3C', 'ARSA', '#2ECC71', 'TARLA', '#F39C12', 'İŞYERİ', '#3498DB', 'DİĞER', '#9B59B6', '#95A5A6'],
-                    'circle-radius': 4, 'circle-opacity': 0.8, 'circle-stroke-width': 1, 'circle-stroke-color': '#ffffff'
-                }
-            });
+        // Mouse move handler (Değişiklik yok)
+        map.on('mousemove', (e) => {
+            if (animationEnabled) { mousePosition = e.lngLat; updateSpider(e.lngLat); }
+        });
+        map.on('mouseleave', () => {
+            if (map.getSource('spider-lines')) { map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: [] }); }
+            if (map.getSource('mouse-point')) { map.getSource('mouse-point').setData({ type: 'FeatureCollection', features: [] }); }
+            document.getElementById('connectionCount').textContent = '0';
+            document.getElementById('nearestDistance').textContent = '-';
+        });
 
-            // 3. Parsel Verisini Ekle (Eğer yüklendiyse)
-            if (parselData) {
-                map.addSource('parseller-source', { type: 'geojson', data: parselData });
-                map.addLayer({
-                    id: 'parseller-layer', type: 'fill', source: 'parseller-source', minzoom: 13,
-                    paint: { 'fill-color': '#95A5A6', 'fill-opacity': 0.3, 'fill-outline-color': '#000000' }
-                }, 'tasinmazlar-layer'); 
-            }
-
-            // 4. Diğer katmanları ekle
-            map.addSource('spider-lines', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-            map.addLayer({ id: 'spider-lines-layer', type: 'line', source: 'spider-lines', paint: { 'line-width': ['get', 'width'], 'line-color': ['get', 'color'], 'line-opacity': ['get', 'opacity'] } });
-            map.addSource('mouse-point', { type: 'geojson', data: { type: 'FeatureCollection', features: [] } });
-            map.addLayer({ id: 'mouse-point-layer', type: 'circle', source: 'mouse-point', paint: { 'circle-radius': 8, 'circle-color': '#e74c3c', 'circle-opacity': 0.8, 'circle-stroke-width': 2, 'circle-stroke-color': '#ffffff', 'circle-stroke-opacity': 1 } });
-            
-            // Filtreleri ve örümcek ağını yeniden uygula
-            applyAllFilters();
-        }
-
+        // Controls (Kaydıraçlar) (Değişiklik yok)
+        document.getElementById('maxDistance').addEventListener('input', (e) => {
+            maxDistance = parseInt(e.target.value);
+            document.getElementById('maxDistanceValue').textContent = `${maxDistance}m`;
+            if (mousePosition && animationEnabled) { updateSpider(mousePosition); }
+        });
+        document.getElementById('maxConnections').addEventListener('input', (e) => {
+            maxConnections = parseInt(e.target.value);
+            document.getElementById('maxConnectionsValue').textContent = maxConnections;
+            if (mousePosition && animationEnabled) { updateSpider(mousePosition); }
+        });
+        document.getElementById('toggleAnimation').addEventListener('click', () => {
+            animationEnabled = !animationEnabled;
+            const btn = document.getElementById('toggleAnimation');
+            btn.textContent = animationEnabled ? 'Animasyonu Durdur' : 'Animasyonu Başlat';
+            if (!animationEnabled) {
+                map.getSource('spider-lines').setData({ type: 'FeatureCollection', features: [] });
+                map.getSource('mouse-point').setData({ type: 'FeatureCollection', features: [] });
+            } else if (mousePosition) { updateSpider(mousePosition); }
+        });
 
         // İLİŞKİSEL GRUP FİLTRESİ
         function updateGrupFilter() {
@@ -475,11 +535,9 @@
             let parselMapFilter = ['all'];
             if (il !== 'TÜMÜ') { parselMapFilter.push(['==', ['get', 'IL_UPPER'], il]); }
             if (ilce !== 'TÜMÜ') { parselMapFilter.push(['==', ['get', 'ILCE_UPPER'], ilce]); }
-
             if (map.getLayer('parseller-layer')) {
                 map.setFilter('parseller-layer', parselMapFilter.length > 1 ? parselMapFilter : null);
             }
-
             if (mousePosition && animationEnabled) {
                 updateSpider(mousePosition);
             }
@@ -506,21 +564,14 @@
             }
         }
         
-        // 'Temizle' fonksiyonu
+        // 'Temizle' fonksiyonu (İSTEK 1)
         function clearAll() {
             document.getElementById('tapuInput').value = '';
             document.getElementById('adaInput').value = '';
             document.getElementById('parselInput').value = '';
             document.getElementById('ilFilter').value = 'TÜMÜ';
-            
-            // Harita stilini başlangıç temasına döndür
-            document.getElementById('mapStyleSelect').value = 'LIGHT';
-            map.setStyle(MAP_STYLES.LIGHT.url, () => {
-                addMapLayers(map, allPoints, parselDataGlobal);
-            });
-
-            updateIlceFilter(); 
-            updateGrupFilter(); 
+            updateIlceFilter(); // İlçe listesini sıfırla
+            updateGrupFilter(); // Grup listesini sıfırla
             document.getElementById('filterGroupSelect').value = 'TÜMÜ';
             applyAllFilters(); 
             if (currentPopup) {
@@ -538,24 +589,13 @@
                 currentPopup = null;
             }
         }
-        
-        // === GELİŞTİRME 1: HARİTA STİLİ DEĞİŞTİRİCİ DİNLEYİCİ ===
-        document.getElementById('mapStyleSelect').addEventListener('change', (e) => {
-            const selectedStyleKey = e.target.value;
-            const styleUrl = MAP_STYLES[selectedStyleKey].url;
-            
-            // MapLibre'da stil değiştirince katmanlar silinir. Yeniden eklemeliyiz.
-            map.setStyle(styleUrl, () => {
-                addMapLayers(map, allPoints, parselDataGlobal);
-            });
-        });
 
-        // Filtre Dinleyicileri (Zoom Logic)
+        // Filtre Dinleyicileri (GÜNCELLENDİ)
         document.getElementById('filterGroupSelect').addEventListener('change', applyAllFilters);
         
         document.getElementById('ilFilter').addEventListener('change', () => {
             updateIlceFilter(); 
-            updateGrupFilter(); 
+            updateGrupFilter(); // İSTEK 6
             applyAllFilters();  
             
             const selectedIl = document.getElementById('ilFilter').value;
@@ -567,8 +607,9 @@
                     if (bbox[0] === bbox[2] && bbox[1] === bbox[3]) {
                         map.flyTo({ center: [bbox[0], bbox[1]], zoom: 15 });
                     } else {
+                        // DÜZELTME: Padding eklendi
                         map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-                            padding: 50 
+                            padding: {top: 50, bottom: 50, left: 290, right: 50} 
                         });
                     }
                 }
@@ -576,9 +617,10 @@
         });
         
         document.getElementById('ilceFilter').addEventListener('change', () => {
-            updateGrupFilter(); 
+            updateGrupFilter(); // İSTEK 6
             applyAllFilters();  
             
+            // İSTEK 3: İLÇE ZOOM
             const selectedIl = document.getElementById('ilFilter').value;
             const selectedIlce = document.getElementById('ilceFilter').value;
             
@@ -590,24 +632,26 @@
                         map.flyTo({ center: [bbox[0], bbox[1]], zoom: 17 }); 
                     } else {
                         map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], {
-                            padding: 80 
+                            padding: {top: 80, bottom: 80, left: 300, right: 80} 
                         });
                     }
                 }
             } else if (selectedIl !== 'TÜMÜ') {
+                // İlçe "TÜMÜ"ne döndü, İLE geri zoom yap
                 const bbox = ilBboxMap.get(selectedIl);
                 if (bbox) {
-                    map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], { padding: 50 });
+                    map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]], { padding: {top: 50, bottom: 50, left: 290, right: 50} });
                 }
             } else {
                 resetView();
             }
         });
         
+        // İSTEK 1: Reset Butonu
         document.getElementById('resetViewButton').addEventListener('click', clearAll);
 
 
-        // Pop-up Fonksiyonu ve Tıklama (GÜNCELLENDİ)
+        // Pop-up Fonksiyonu (GÜNCELLENDİ - İSTEK 5)
         function showPopup(feature, lngLat) {
             const props = feature.properties; 
             const coords = lngLat ? [lngLat.lng, lngLat.lat] : feature.geometry.coordinates.slice();
@@ -627,6 +671,7 @@
                 // Bu bir PARSEL pop-up'ı
                 html += `<div class="popup-title">Parsel Bilgisi</div>`;
                 if (props.İl_Adı) html += `<strong>İl/İlçe:</strong> ${props.İl_Adı} / ${props.İlçe_Adı}<br>`;
+                // ÖNEMLİ: Parsel dosyanızda bu sütunlar varsa görünür
                 if (props.Ada) html += `<strong>Ada/Parsel:</strong> ${props.Ada} / ${props.Parsel}<br>`;
                 if (props.Mahalle) html += `<strong>Mahalle:</strong> ${props.Mahalle}<br>`;
                 
@@ -651,7 +696,7 @@
             showPopup(e.features[0]); 
         });
         
-        // PARSEL TIKLAMASI
+        // İSTEK 4: PARSEL TIKLAMASI
         map.on('click', 'parseller-layer', (e) => {
             e.preventDefault();
             showPopup(e.features[0], e.lngLat); 
